@@ -40,6 +40,10 @@ tailwind.config = {
   .pill-critical { color:#f87171; background:rgba(248,113,113,0.10); border-color:rgba(248,113,113,0.25); }
   input, select { color-scheme: dark; }
 </style>
+<style>
+.slide-panel{display:none;opacity:0;transform:translateY(16px);transition:opacity .35s ease,transform .35s ease}
+.slide-panel.show{opacity:1;transform:none}
+</style>
 </head>
 <body class="font-sans text-slate-100 antialiased">
 
@@ -80,9 +84,10 @@ tailwind.config = {
   <main class="space-y-8 px-6 py-8 lg:px-10">
     <div>
       <h1 class="text-2xl font-bold tracking-tight" id="pageTitle">Collections Dashboard</h1>
-      <p class="mt-1 text-sm text-muted">Monitor protected invoices and automated recovery in real time.</p>
+      <p class="mt-1 text-sm text-muted" id="pageSub">Monitor protected invoices and automated recovery in real time.</p>
     </div>
 
+    <div id="collectionsView" class="space-y-8">
     <!-- Stats -->
     <section class="grid gap-5 md:grid-cols-3" id="stats"></section>
 
@@ -110,6 +115,26 @@ tailwind.config = {
         </table>
       </div>
     </section>
+    </div>
+
+    <!-- Blacklist Directory -->
+    <div id="blacklistView" class="slide-panel space-y-6">
+      <form id="bSearchForm" class="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 sm:flex-row">
+        <div class="flex flex-1 items-center gap-3 rounded-xl border border-border bg-[#030712] px-4">
+          <svg class="size-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          <input id="bSearch" type="text" autocomplete="off" placeholder="Search companies, agencies, or client emails..." class="w-full bg-transparent py-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none" />
+        </div>
+        <button type="submit" class="glow rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110" style="box-shadow:0 0 24px -4px rgba(59,130,246,.75)">Verify Client Status</button>
+      </form>
+      <div id="bResult"></div>
+      <section class="overflow-hidden rounded-2xl border border-border bg-card">
+        <div class="border-b border-border px-6 py-4">
+          <h2 class="font-semibold">Reported Client Ledger</h2>
+          <p class="text-xs text-muted" id="bCount"></p>
+        </div>
+        <div id="bList"></div>
+      </section>
+    </div>
   </main>
 </div>
 
@@ -226,6 +251,7 @@ tailwind.config = {
       btn.addEventListener("click", function () {
         document.getElementById("pageTitle").textContent = item.label;
         renderNavActive(idx);
+        showView(item.label);
       });
       nav.appendChild(btn);
     });
@@ -345,7 +371,58 @@ tailwind.config = {
     closeModal();
   });
 
+
+  // ===== Blacklist Directory =====
+  var BL_KEY = "payshield_blacklist_v1";
+  var BL_SEED = [
+    { company: "Acme Studio", email: "accounts@acmestudio.co", amount: 4200, status: "Ghosted Payment - 42 Days Overdue", tone: "critical", evidence: "3 invoices issued for brand design work. Client confirmed delivery by email on Sep 12, then stopped replying. 5 reminders and 1 final notice sent with no response." },
+    { company: "Alpha Designs", email: "ops@alphadesigns.io", amount: 2750, status: "Refused Contract Terms", tone: "warn", evidence: "Signed the scope of work, then disputed the agreed rate after delivery and offered 40% of the invoice. Signed contract and chat history on file." },
+    { company: "Nova Media Agency", email: "finance@novamedia.agency", amount: 6100, status: "Ghosted Payment - 67 Days Overdue", tone: "critical", evidence: "Video editing project delivered in full. Agency's billing email bounces and the project manager blocked the freelancer on all channels." }
+  ];
+  function loadBL(){ try{ var r=localStorage.getItem(BL_KEY); if(r){ var p=JSON.parse(r); if(Array.isArray(p)) return p; } }catch(e){} return BL_SEED.slice(); }
+  var blacklist = loadBL(); localStorage.setItem(BL_KEY, JSON.stringify(blacklist));
+  function esc(t){ var d=document.createElement("div"); d.textContent=t; return d.innerHTML; }
+  function renderBL(list){
+    var box=document.getElementById("bList"); box.innerHTML="";
+    document.getElementById("bCount").textContent = blacklist.length + " reported companies";
+    list.forEach(function(c){
+      var tag = c.tone==="critical" ? "font-bold text-red-500 bg-red-500/10 border-red-500/25" : "font-semibold text-amber-400 bg-amber-400/10 border-amber-400/25";
+      var row=document.createElement("div"); row.className="border-t border-border first:border-t-0 px-6 py-4 transition-colors hover:bg-white/[.03]";
+      row.innerHTML='<div class="flex flex-wrap items-center gap-4">'+
+        '<div class="flex min-w-[180px] flex-1 items-center gap-3"><div class="grid size-9 place-items-center rounded-full bg-primary/15 text-sm font-semibold text-primary">'+esc(c.company[0])+'</div><div><p class="font-medium">'+esc(c.company)+'</p><p class="text-xs text-muted">'+esc(c.email)+'</p></div></div>'+
+        '<div class="w-28"><p class="text-xs text-muted">Disputed</p><p class="font-semibold tabular-nums">$'+Number(c.amount).toLocaleString("en-US")+'</p></div>'+
+        '<span class="rounded-full border px-3 py-1 text-xs '+tag+'">'+esc(c.status)+'</span>'+
+        '<button class="ev ml-auto text-xs font-medium text-primary hover:underline">View Evidence Summary</button></div>'+
+        '<div class="evbox hidden mt-3 rounded-xl border border-border bg-[#030712] p-4 text-sm text-slate-300">'+esc(c.evidence)+'</div>';
+      row.querySelector(".ev").addEventListener("click",function(){
+        var b=row.querySelector(".evbox"); var h=b.classList.toggle("hidden");
+        this.textContent = h ? "View Evidence Summary" : "Hide Evidence Summary";
+      });
+      box.appendChild(row);
+    });
+  }
+  function searchBL(){
+    var q=document.getElementById("bSearch").value.trim().toLowerCase();
+    var res=document.getElementById("bResult");
+    if(!q){ res.innerHTML=""; renderBL(blacklist); return; }
+    var hits=blacklist.filter(function(c){ return c.company.toLowerCase().indexOf(q)>-1 || c.email.toLowerCase().indexOf(q)>-1; });
+    renderBL(hits);
+    res.innerHTML = hits.length
+      ? '<div class="rounded-2xl border border-red-500/30 bg-red-500/10 p-5"><p class="font-semibold text-red-400">⚠️ Dispute Record Found</p><p class="mt-1 text-sm text-slate-300">'+hits.length+' matching report(s) shown below. Review the evidence before accepting work.</p></div>'
+      : '<div class="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-5"><p class="font-semibold text-emerald-400">🔒 Clear Record: No outstanding dispute logs found for this client.</p><p class="mt-1 text-sm text-slate-400">"'+esc(q)+'" has no reports in the PayShield directory.</p></div>';
+  }
+  document.getElementById("bSearchForm").addEventListener("submit",function(e){ e.preventDefault(); searchBL(); });
+  document.getElementById("bSearch").addEventListener("input",function(){ if(!this.value.trim()) searchBL(); });
+
+  function showView(label){
+    var bl = label==="Client Blacklist Directory";
+    var cv=document.getElementById("collectionsView"), bv=document.getElementById("blacklistView");
+    document.getElementById("pageSub").textContent = bl ? "Check a client's payment history before you take on new work." : "Monitor protected invoices and automated recovery in real time.";
+    if(bl){ cv.style.display="none"; bv.style.display="block"; requestAnimationFrame(function(){ requestAnimationFrame(function(){ bv.classList.add("show"); }); }); }
+    else { bv.classList.remove("show"); bv.style.display="none"; cv.style.display=""; }
+  }
   // Initial paint
+  renderBL(blacklist);
   renderNav();
   renderAll();
 })();
