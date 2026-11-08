@@ -52,6 +52,8 @@ tailwind.config = {
   .log-copy{display:none}
   .log-copy.is-open{display:block;animation:copyIn .2s ease both}
   @keyframes copyIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .report-modal{animation:reportIn .25s ease both}
+  @keyframes reportIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body class="font-sans text-slate-100 antialiased">
@@ -136,8 +138,11 @@ tailwind.config = {
           <svg class="size-4 text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           <input id="bSearch" type="text" autocomplete="off" placeholder="Search suspicious companies, agencies, or client emails..." class="w-full bg-transparent py-3 text-sm text-slate-100 placeholder:text-slate-500 outline-none" />
         </div>
-        <button type="submit" class="glow rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110" style="box-shadow:0 0 24px -4px rgba(59,130,246,.75)">Verify Client Status</button>
-      </form>
+  <div class="flex flex-col gap-3 sm:flex-row">
+    <button type="submit" class="glow rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white transition hover:brightness-110" style="box-shadow:0 0 24px -4px rgba(59,130,246,.75)">Verify Client Status</button>
+    <button id="openBlacklistModal" type="button" class="rounded-xl border border-rose-400/30 bg-rose-500/10 px-5 py-3 text-sm font-semibold text-rose-300 transition hover:border-rose-300/60 hover:bg-rose-500/20 hover:text-rose-200">+ Report Bad Client</button>
+  </div>
+  </form>
       <div id="bResult"></div>
       <section class="overflow-hidden rounded-2xl border border-border bg-card">
         <div class="border-b border-border px-6 py-4">
@@ -186,6 +191,35 @@ tailwind.config = {
       <button type="submit" class="grad w-full rounded-lg py-2.5 text-sm font-semibold text-white hover:brightness-110">
         Activate Protection
       </button>
+    </form>
+  </div>
+</div>
+
+<!-- Report bad client modal -->
+<div id="blacklistModal" class="fixed inset-0 z-50 hidden place-items-center bg-black/75 p-4 backdrop-blur-sm" aria-hidden="true">
+  <div class="report-modal w-full max-w-lg rounded-2xl border border-rose-400/20 bg-[#0b1120]/95 p-6 shadow-2xl shadow-black/40" role="dialog" aria-modal="true" aria-labelledby="blacklistModalTitle">
+    <div class="flex items-start justify-between gap-4">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.18em] text-rose-300">Community safety report</p>
+        <h3 id="blacklistModalTitle" class="mt-2 text-xl font-bold tracking-tight">Report a bad client</h3>
+        <p class="mt-1 text-sm text-muted">Add a concise dispute log to your private directory.</p>
+      </div>
+      <button id="closeBlacklistModal" type="button" aria-label="Close report modal" class="grid size-9 place-items-center rounded-lg border border-border text-muted transition hover:border-rose-400/40 hover:bg-rose-400/10 hover:text-slate-100">
+        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <form id="blacklistForm" class="mt-6 space-y-4">
+      <div class="grid gap-4 sm:grid-cols-2">
+        <label class="block"><span class="text-xs font-medium text-muted">Company Name</span><input id="blCompany" required placeholder="Northstar Agency" class="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition focus:border-rose-400/60"></label>
+        <label class="block"><span class="text-xs font-medium text-muted">Client Email Address</span><input id="blEmail" type="email" required placeholder="billing@client.com" class="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition focus:border-rose-400/60"></label>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <label class="block"><span class="text-xs font-medium text-muted">Disputed Balance (USD)</span><input id="blAmount" type="number" min="0" step="0.01" required placeholder="2500.00" class="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition focus:border-rose-400/60"></label>
+        <label class="block"><span class="text-xs font-medium text-muted">Offense Category</span><select id="blCategory" required class="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition focus:border-rose-400/60"><option value="">Select category</option><option>Ghosted Payment</option><option>Contract Breach</option><option>Scope Creep</option><option>Unresponsive</option></select></label>
+      </div>
+      <label class="block"><span class="text-xs font-medium text-muted">Brief Description of Incident</span><textarea id="blDescription" required rows="4" placeholder="Describe what happened, keeping the report factual and specific..." class="mt-1.5 w-full resize-none rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none transition focus:border-rose-400/60"></textarea></label>
+      <p id="blacklistFormMessage" class="hidden rounded-lg border border-rose-400/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-300" role="alert"></p>
+      <div class="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:justify-end"><button id="cancelBlacklistModal" type="button" class="rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-muted transition hover:bg-white/5 hover:text-slate-100">Cancel</button><button id="submitBlacklist" type="submit" class="rounded-lg bg-rose-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-rose-400">Submit Dispute Log</button></div>
     </form>
   </div>
 </div>
@@ -464,14 +498,78 @@ tailwind.config = {
 
 
   // ===== Blacklist Directory =====
-  var BL_KEY = "payshield_blacklist_v1";
+  var BL_KEY = "payshield_blacklist";
+  var BL_LEGACY_KEY = "payshield_blacklist_v1";
   var BL_SEED = [
     { company: "Acme Studio Group", email: "accounts@acmestudio.co", amount: 4200, status: "Ghosted Payment", tone: "critical", reports: 7, evidence: "7 freelancers report unpaid final invoices. Last confirmed contact Sep 14, 2026. Domain still active; billing contact stops responding after delivery sign-off." },
     { company: "Alpha Digital Agency", email: "billing@alphadigital.io", amount: 1850, status: "Contract Breach", tone: "critical", reports: 4, evidence: "4 reports of scope expansion without amended contracts, then refusal to pay the agreed milestone. Two cases settled only after formal demand letters." },
     { company: "Nova Media Agency", email: "finance@novamedia.agency", amount: 950, status: "Repeated Late Payment", tone: "warn", reports: 3, evidence: "3 reports of invoices paid 45-90 days late despite net-14 terms. Payments eventually arrive, but only after repeated escalation." }
   ];
-  function loadBL(){ try{ var r=localStorage.getItem(BL_KEY); if(r){ var p=JSON.parse(r); if(Array.isArray(p)) return p; } }catch(e){} return BL_SEED.slice(); }
+  function loadBL(){
+    try{
+      var r=localStorage.getItem(BL_KEY) || localStorage.getItem(BL_LEGACY_KEY);
+      if(r){ var p=JSON.parse(r); if(Array.isArray(p)) return p; }
+    }catch(e){}
+    return BL_SEED.slice();
+  }
   var blacklist = loadBL(); localStorage.setItem(BL_KEY, JSON.stringify(blacklist));
+  var blacklistModal = document.getElementById("blacklistModal");
+  var blacklistForm = document.getElementById("blacklistForm");
+  function openBlacklistModal(){
+    blacklistModal.classList.remove("hidden");
+    blacklistModal.classList.add("grid");
+    blacklistModal.setAttribute("aria-hidden", "false");
+    document.getElementById("blCompany").focus();
+  }
+  function closeBlacklistModal(){
+    blacklistModal.classList.add("hidden");
+    blacklistModal.classList.remove("grid");
+    blacklistModal.setAttribute("aria-hidden", "true");
+    blacklistForm.reset();
+  }
+  document.getElementById("openBlacklistModal").addEventListener("click", openBlacklistModal);
+  document.getElementById("closeBlacklistModal").addEventListener("click", closeBlacklistModal);
+  document.getElementById("cancelBlacklistModal").addEventListener("click", closeBlacklistModal);
+  blacklistModal.addEventListener("click", function(e){ if(e.target === blacklistModal) closeBlacklistModal(); });
+  document.addEventListener("keydown", function(e){ if(e.key === "Escape" && !blacklistModal.classList.contains("hidden")) closeBlacklistModal(); });
+  blacklistForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    var message = document.getElementById("blacklistFormMessage");
+    message.classList.add("hidden");
+    if(!blacklistForm.checkValidity()){
+      blacklistForm.reportValidity();
+      return;
+    }
+    var report = {
+      id: "BL-" + Date.now(),
+      company: document.getElementById("blCompany").value.trim(),
+      email: document.getElementById("blEmail").value.trim(),
+      amount: parseFloat(document.getElementById("blAmount").value),
+      status: document.getElementById("blCategory").value,
+      tone: "critical",
+      reports: 1,
+      evidence: document.getElementById("blDescription").value.trim(),
+      createdAt: new Date().toISOString()
+    };
+    if(!report.company || !report.email || !report.status || !report.evidence || !Number.isFinite(report.amount) || report.amount < 0){
+      message.textContent = "Please complete every field with a valid value before submitting.";
+      message.classList.remove("hidden");
+      return;
+    }
+    blacklist.unshift(report);
+    try{
+      localStorage.setItem(BL_KEY, JSON.stringify(blacklist));
+    }catch(storageError){
+      message.textContent = "Your browser blocked local storage. Enable site storage and try again.";
+      message.classList.remove("hidden");
+      blacklist.shift();
+      return;
+    }
+    closeBlacklistModal();
+    document.getElementById("bSearch").value = "";
+    document.getElementById("bResult").innerHTML = '<div class="rounded-2xl border border-rose-400/30 bg-rose-500/10 p-5"><p class="font-semibold text-rose-300">Dispute log submitted successfully.</p><p class="mt-1 text-sm text-slate-400">The new report is now at the top of your private directory.</p></div>';
+    renderBL(blacklist);
+  });
   function esc(t){ var d=document.createElement("div"); d.textContent=t; return d.innerHTML; }
   function renderBL(list){
     var box=document.getElementById("bList"); box.innerHTML="";
