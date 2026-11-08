@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -38,6 +38,8 @@ tailwind.config = {
   .pill-nudge { color:#fbbf24; background:rgba(251,191,36,0.10); border-color:rgba(251,191,36,0.20); }
   .pill-warn { color:#fbbf24; background:rgba(251,191,36,0.15); border-color:rgba(251,191,36,0.30); }
   .pill-critical { color:#f87171; background:rgba(248,113,113,0.10); border-color:rgba(248,113,113,0.25); }
+  .pill-paid { color:#34d399; background:rgba(52,211,153,0.10); border-color:rgba(52,211,153,0.24); text-shadow:0 0 12px rgba(52,211,153,.8); }
+  .pill-overdue { color:#fb7185; background:rgba(225,29,72,0.12); border-color:rgba(225,29,72,0.32); font-weight:700; }
   input, select { color-scheme: dark; }
 </style>
 <style>
@@ -98,6 +100,9 @@ tailwind.config = {
           <h2 class="font-semibold">Active Invoice Ledger</h2>
           <p class="text-xs text-muted" id="ledgerCount"></p>
         </div>
+        <button id="clearExamples" type="button" class="rounded-lg border border-border px-3 py-2 text-xs font-semibold text-muted transition hover:border-rose-400/40 hover:bg-rose-400/10 hover:text-rose-300">
+          Clear examples
+        </button>
       </div>
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
@@ -182,7 +187,8 @@ tailwind.config = {
 (function () {
   "use strict";
 
-  var STORAGE_KEY = "payshield_invoices_v1";
+  var STORAGE_KEY = "payshield_invoices";
+  var LEGACY_STORAGE_KEY = "payshield_invoices_v1";
 
   var NAV_ITEMS = [
     { label: "Collections Dashboard" },
@@ -201,10 +207,12 @@ tailwind.config = {
 
   function loadInvoices() {
     try {
-      var raw = window.localStorage.getItem(STORAGE_KEY);
+      var raw = window.localStorage.getItem(STORAGE_KEY) || window.localStorage.getItem(LEGACY_STORAGE_KEY);
       if (raw) {
         var parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed)) return parsed.map(function (inv) {
+          return Object.assign({}, inv, { status: inv.status || "PENDING" });
+        });
       }
     } catch (e) { /* corrupted storage falls through to seed */ }
     return SEED_INVOICES.slice();
@@ -275,14 +283,17 @@ tailwind.config = {
   }
 
   function renderStats() {
-    var total = 0, overdue = 0, overdueCount = 0;
+    var total = 0, pending = 0, overdue = 0, overdueCount = 0;
     invoices.forEach(function (inv) {
-      total += Number(inv.amount) || 0;
+      var amount = Number(inv.amount) || 0;
+      total += amount;
+      if (inv.status !== "PAID") pending += amount;
       var s = stageFor(inv.due);
-      if (s.level === "warn" || s.level === "critical") { overdue += Number(inv.amount) || 0; overdueCount++; }
+      if (inv.status === "OVERDUE" || (inv.status !== "PAID" && (s.level === "warn" || s.level === "critical"))) { overdue += amount; overdueCount++; }
     });
     var cards = [
       { label: "Total Protected Funds", value: fmtMoney(total), note: invoices.length + " invoices under protection", tone: "text-primary bg-primary/10" },
+      { label: "Pending Balance", value: fmtMoney(pending), note: "Unpaid invoice value", tone: "text-warning bg-warning/10" },
       { label: "Critically Overdue", value: fmtMoney(overdue), note: overdueCount + " invoice" + (overdueCount === 1 ? "" : "s") + " need attention", tone: "text-destructive bg-destructive/10" },
       { label: "Auto-Recovered This Month", value: "$8,420.00", note: "6 invoices settled", tone: "text-success bg-success/10" }
     ];
@@ -316,6 +327,9 @@ tailwind.config = {
 
     invoices.forEach(function (inv) {
       var s = stageFor(inv.due);
+      var status = inv.status || "PENDING";
+      var statusClass = status === "PAID" ? "pill-paid" : status === "OVERDUE" ? "pill-overdue" : "pill-" + s.level;
+      var statusLabel = status === "PAID" ? "PAID" : status === "OVERDUE" ? "OVERDUE" : s.label;
       var tr = document.createElement("tr");
       tr.className = "border-t border-border transition-colors hover:bg-white/5";
       tr.innerHTML =
@@ -329,12 +343,35 @@ tailwind.config = {
         '</td>' +
         '<td class="px-6 py-4 font-semibold tabular-nums">' + fmtMoney(inv.amount) + '</td>' +
         '<td class="px-6 py-4 text-muted">' + fmtDate(inv.due) + '</td>' +
-        '<td class="px-6 py-4"><span class="pill pill-' + s.level + '"><span class="dot"></span>' + s.label + '</span></td>' +
+        '<td class="px-6 py-4"><span class="pill ' + statusClass + '"><span class="dot"></span>' + statusLabel + '</span></td>' +
         '<td class="px-6 py-4 text-right">' +
-          '<button class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-slate-100 hover:border-primary/40 hover:text-primary">View Reminder Logs</button>' +
+          '<div class="flex items-center justify-end gap-2">' +
+            '<button data-action="paid" class="rounded-lg border border-emerald-400/20 px-2.5 py-1.5 text-xs font-semibold text-emerald-300 transition hover:border-emerald-300/50 hover:bg-emerald-400/10">Mark as Paid</button>' +
+            '<button data-action="overdue" class="rounded-lg border border-rose-400/20 px-2.5 py-1.5 text-xs font-semibold text-rose-300 transition hover:border-rose-300/50 hover:bg-rose-400/10">Mark Overdue</button>' +
+            '<button data-action="delete" aria-label="Delete ' + inv.id + '" title="Delete invoice" class="grid size-8 place-items-center rounded-lg border border-border text-muted transition hover:border-rose-400/40 hover:bg-rose-400/10 hover:text-rose-300">' +
+              '<svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="m19 6-1 14H6L5 6"/><path d="M10 11v5M14 11v5"/></svg>' +
+            '</button>' +
+          '</div>' +
         '</td>';
+      tr.querySelector('[data-action="paid"]').addEventListener("click", function () { updateInvoiceStatus(inv.id, "PAID"); });
+      tr.querySelector('[data-action="overdue"]').addEventListener("click", function () { updateInvoiceStatus(inv.id, "OVERDUE"); });
+      tr.querySelector('[data-action="delete"]').addEventListener("click", function () { deleteInvoice(inv.id); });
       body.appendChild(tr);
     });
+  }
+
+  function updateInvoiceStatus(id, status) {
+    invoices = invoices.map(function (inv) {
+      return inv.id === id ? Object.assign({}, inv, { status: status }) : inv;
+    });
+    saveInvoices(invoices);
+    renderAll();
+  }
+
+  function deleteInvoice(id) {
+    invoices = invoices.filter(function (inv) { return inv.id !== id; });
+    saveInvoices(invoices);
+    renderAll();
   }
 
   function renderAll() {
@@ -362,6 +399,16 @@ tailwind.config = {
   modal.addEventListener("click", function (e) { if (e.target === modal) closeModal(); });
   document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !modal.classList.contains("hidden")) closeModal(); });
 
+  document.getElementById("clearExamples").addEventListener("click", function () {
+    var exampleIds = SEED_INVOICES.reduce(function (ids, inv) {
+      ids[inv.id] = true;
+      return ids;
+    }, {});
+    invoices = invoices.filter(function (inv) { return !exampleIds[inv.id]; });
+    saveInvoices(invoices);
+    renderAll();
+  });
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     var inv = {
@@ -369,7 +416,8 @@ tailwind.config = {
       client: document.getElementById("fClient").value.trim(),
       email: document.getElementById("fEmail").value.trim(),
       amount: parseFloat(document.getElementById("fAmount").value),
-      due: document.getElementById("fDue").value
+      due: document.getElementById("fDue").value,
+      status: "PENDING"
     };
     if (!inv.client || !inv.email || isNaN(inv.amount) || !inv.due) return;
     invoices.push(inv);
