@@ -44,7 +44,14 @@ tailwind.config = {
 </style>
 <style>
 .slide-panel{display:none;opacity:0;transform:translateY(16px);transition:opacity .35s ease,transform .35s ease}
-.slide-panel.show{opacity:1;transform:none}
+  .slide-panel.show{opacity:1;transform:none}
+  .log-drawer{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .35s ease,opacity .25s ease}
+  .log-drawer.is-open{grid-template-rows:1fr;opacity:1}
+  .log-drawer-inner{min-height:0;overflow:hidden}
+  .timeline-line{position:absolute;left:8px;top:22px;bottom:22px;width:1px;background:linear-gradient(#4f6df5,rgba(79,109,245,.12))}
+  .log-copy{display:none}
+  .log-copy.is-open{display:block;animation:copyIn .2s ease both}
+  @keyframes copyIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body class="font-sans text-slate-100 antialiased">
@@ -345,7 +352,8 @@ tailwind.config = {
         '<td class="px-6 py-4 text-muted">' + fmtDate(inv.due) + '</td>' +
         '<td class="px-6 py-4"><span class="pill ' + statusClass + '"><span class="dot"></span>' + statusLabel + '</span></td>' +
         '<td class="px-6 py-4 text-right">' +
-          '<div class="flex items-center justify-end gap-2">' +
+          '<div class="flex flex-wrap items-center justify-end gap-2">' +
+            '<button data-action="logs" aria-expanded="false" class="rounded-lg border border-primary/25 px-2.5 py-1.5 text-xs font-semibold text-primary transition hover:border-primary/60 hover:bg-primary/10">View Automated Logs</button>' +
             '<button data-action="paid" class="rounded-lg border border-emerald-400/20 px-2.5 py-1.5 text-xs font-semibold text-emerald-300 transition hover:border-emerald-300/50 hover:bg-emerald-400/10">Mark as Paid</button>' +
             '<button data-action="overdue" class="rounded-lg border border-rose-400/20 px-2.5 py-1.5 text-xs font-semibold text-rose-300 transition hover:border-rose-300/50 hover:bg-rose-400/10">Mark Overdue</button>' +
             '<button data-action="delete" aria-label="Delete ' + inv.id + '" title="Delete invoice" class="grid size-8 place-items-center rounded-lg border border-border text-muted transition hover:border-rose-400/40 hover:bg-rose-400/10 hover:text-rose-300">' +
@@ -353,10 +361,38 @@ tailwind.config = {
             '</button>' +
           '</div>' +
         '</td>';
+      var logRow = document.createElement("tr");
+      logRow.className = "border-t border-border bg-[#080e1c]";
+      logRow.innerHTML = '<td colspan="6" class="p-0"><div class="log-drawer"><div class="log-drawer-inner"><div class="px-6 py-5 sm:px-8"><div class="mb-4 flex items-center justify-between"><div><p class="text-xs font-semibold uppercase tracking-[0.18em] text-primary">Automated email tracking</p><p class="mt-1 text-xs text-muted">Delivery history for ' + inv.email + '</p></div><span class="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">Live sequence</span></div><div class="relative space-y-5 pl-7" data-timeline></div></div></div></div></td>';
+      var drawer = logRow.querySelector(".log-drawer");
+      var timeline = logRow.querySelector("[data-timeline]");
+      timeline.insertAdjacentHTML("afterbegin", '<div class="timeline-line"></div>');
+      var logs = [
+        { milestone: "Day 1", title: "Professional Welcome & Payment Link Dispatched", state: "Delivered", tone: "text-emerald-300", copy: "Hello " + inv.client + ",\\n\\nYour invoice is now protected by PayShield. Please use the secure payment link included below to review and settle the balance by the due date.\\n\\nThank you for your prompt attention." },
+        { milestone: "Due Date - 3 Days", title: "Automated Reminder Notice Sent to " + inv.email, state: "Opened", tone: "text-amber-300", copy: "Hi " + inv.client + ",\\n\\nA friendly reminder that invoice " + inv.id + " is approaching its due date. We have included your secure PayShield payment link for convenience.\\n\\nPlease let us know if you have any questions." }
+      ];
+      if (status === "OVERDUE") logs.push({ milestone: "Escalation", title: "Escalated Formal Late Notice & Collection Warning Transmitted", state: "Sent", tone: "text-rose-300", copy: "Formal notice to " + inv.client + ":\\n\\nInvoice " + inv.id + " is now overdue. Please remit the outstanding balance immediately through the secure PayShield payment link. Continued non-payment may result in formal collection action." });
+      logs.forEach(function (log) {
+        var item = document.createElement("div");
+        item.className = "relative";
+        item.innerHTML = '<span class="absolute -left-7 top-1.5 grid size-4 place-items-center rounded-full border border-primary/50 bg-card"><span class="size-1.5 rounded-full bg-primary"></span></span><div class="flex flex-wrap items-start justify-between gap-2"><div><p class="text-[11px] font-semibold uppercase tracking-wider text-muted">' + log.milestone + '</p><p class="mt-1 text-sm font-medium text-slate-200">' + log.title + '</p></div><span class="text-xs font-semibold ' + log.tone + '">' + log.state + '</span></div><button type="button" class="copy-toggle mt-2 text-xs font-medium text-primary hover:underline">View Sent Copy</button><pre class="log-copy mt-2 whitespace-pre-wrap rounded-lg border border-border bg-background p-3 text-xs leading-relaxed text-slate-300">' + log.copy + '</pre>';
+        item.querySelector(".copy-toggle").addEventListener("click", function () {
+          var copy = item.querySelector(".log-copy");
+          var open = copy.classList.toggle("is-open");
+          this.textContent = open ? "Hide Sent Copy" : "View Sent Copy";
+        });
+        timeline.appendChild(item);
+      });
+      tr.querySelector('[data-action="logs"]').addEventListener("click", function () {
+        var open = drawer.classList.toggle("is-open");
+        this.setAttribute("aria-expanded", String(open));
+        this.textContent = open ? "Hide Automated Logs" : "View Automated Logs";
+      });
       tr.querySelector('[data-action="paid"]').addEventListener("click", function () { updateInvoiceStatus(inv.id, "PAID"); });
       tr.querySelector('[data-action="overdue"]').addEventListener("click", function () { updateInvoiceStatus(inv.id, "OVERDUE"); });
       tr.querySelector('[data-action="delete"]').addEventListener("click", function () { deleteInvoice(inv.id); });
       body.appendChild(tr);
+      body.appendChild(logRow);
     });
   }
 
