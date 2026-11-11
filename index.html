@@ -1,126 +1,666 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#09090b" />
 <title>PayShield — Your Freelance Payment Bodyguard</title>
+<meta name="description" content="Automate invoice collections. Move from polite nudges to escalating legal warnings effortlessly." />
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
 <script>
   tailwind.config = {
-    theme: { extend: {
-      fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], mono: ['"JetBrains Mono"', 'monospace'] },
-      colors: { ink: '#030712', card: '#0b1120', primary: '#3b82f6', success: '#10b981', danger: '#ef4444', warn: '#f59e0b' }
-    } }
-  }
+    theme: {
+      extend: {
+        colors: {
+          ink: { DEFAULT: '#09090b', 900: '#0c0c0f', 800: '#121216', 700: '#18181b', 600: '#27272a', 500: '#3f3f46' },
+          shield: { DEFAULT: '#3b82f6', light: '#60a5fa', dark: '#2563eb' },
+          alarm: { DEFAULT: '#ef4444', light: '#f87171' },
+        },
+        fontFamily: { sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'], mono: ['Geist Mono', 'ui-monospace', 'monospace'] },
+      },
+    },
+  };
 </script>
 <style>
-  html { scroll-behavior: smooth; }
-  .glow { box-shadow: 0 0 0 1px rgba(59,130,246,.6), 0 10px 40px -8px rgba(59,130,246,.7); }
-  .text-gradient { background: linear-gradient(180deg,#f8fafc,rgba(248,250,252,.55)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .bg-hero { background-image: radial-gradient(60% 50% at 50% 0%, rgba(59,130,246,.28), transparent 70%); }
-  .bg-grid { background-image: linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px); background-size:56px 56px; -webkit-mask-image: radial-gradient(ellipse at 50% 0%, black 30%, transparent 75%); mask-image: radial-gradient(ellipse at 50% 0%, black 30%, transparent 75%); }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+  body { background:#09090b; }
+  img, svg, video, canvas { max-width: 100%; }
+  button, a, input { min-width: 0; }
+  .glow-blue { box-shadow: 0 0 0 1px rgba(59,130,246,.6), 0 0 24px -2px rgba(59,130,246,.65), inset 0 1px 0 rgba(255,255,255,.18); }
+  .glow-blue:hover { box-shadow: 0 0 0 1px rgba(96,165,250,.9), 0 0 36px 0 rgba(59,130,246,.8), inset 0 1px 0 rgba(255,255,255,.25); }
+  .grid-bg {
+    background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 55% at 50% 0%, #000 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 0%, #000 40%, transparent 100%);
+  }
+  .card-spot { position: relative; isolation: isolate; }
+  .card-spot::before {
+    content:""; position:absolute; inset:0; border-radius:inherit; z-index:-1; opacity:0; transition:opacity .3s;
+    background: radial-gradient(420px circle at var(--x,50%) var(--y,50%), rgba(59,130,246,.14), transparent 45%);
+  }
+  .card-spot:hover::before { opacity:1; }
+  .fade-up { opacity:0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease; }
+  @media (max-width: 639px) {
+    .hero-copy { padding-inline: 0.25rem; }
+    .hero-eyebrow { max-width: 100%; text-align: left; line-height: 1.35; }
+    .hero-title { font-size: clamp(2.15rem, 10.5vw, 3.25rem); line-height: 1.04; letter-spacing: -0.045em; }
+    .hero-title .free-bank { white-space: normal; }
+    .hero-actions > a { min-height: 48px; }
+    .dashboard-shell { border-radius: 1rem; }
+    .dashboard-url { min-width: 0; max-width: 68vw; overflow-wrap: anywhere; text-align: center; }
+    .dashboard-content { padding: 0.75rem; }
+    .dashboard-kpis { gap: 0.375rem; }
+    .dashboard-kpis > div { padding: 0.625rem 0.5rem; }
+    .dashboard-kpis p:first-child { font-size: 0.58rem; letter-spacing: 0.06em; }
+    .dashboard-kpis p:last-child { font-size: 0.9rem; }
+    .invoice-row { gap: 0.5rem; padding-inline: 0.625rem; }
+    .invoice-row .invoice-amount { font-size: 0.68rem; }
+    .escalation-actions { flex-direction: column; }
+    .escalation-actions button { min-height: 44px; }
+    .section-heading { font-size: clamp(2rem, 9vw, 3rem); line-height: 1.08; }
+    .feature-grid { gap: 0.75rem; }
+    .feature-card { padding: 1.125rem; }
+    .pricing-card { padding: 1.375rem; }
+    .pricing-card h3 { font-size: 1rem; }
+    .pricing-card .price { font-size: 3.35rem; }
+    .footer-nav { gap: 0.75rem 1.25rem; }
+  }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .dashboard-content { padding: 1rem; }
+  }
+  .fade-up.in { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce) { .fade-up { opacity:1; transform:none; transition:none; } * { animation:none !important; } }
+  @keyframes pulse-ring { 0% { transform: scale(.8); opacity:.8 } 100% { transform: scale(2.2); opacity:0 } }
+  .pulse-ring::after { content:""; position:absolute; inset:0; border-radius:9999px; background:currentColor; animation:pulse-ring 1.8s ease-out infinite; }
+  ::selection { background: rgba(59,130,246,.35); }
 </style>
 </head>
-<body class="bg-ink text-slate-50 font-sans antialiased overflow-x-hidden">
+<body class="bg-ink text-zinc-300 font-sans antialiased overflow-x-hidden">
 
-<!-- Nav -->
-<header class="sticky top-0 z-50 border-b border-white/10 bg-ink/70 backdrop-blur-xl">
-  <nav class="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-    <a href="#" class="flex items-center gap-2 text-lg font-extrabold tracking-tight">
-      <svg viewBox="0 0 24 24" class="h-6 w-6 text-primary" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6l8-4z"/><path d="M9 12l2 2 4-4"/></svg>
-      PayShield
+<!-- NAV -->
+<header class="sticky top-0 z-50 border-b border-white/[0.06] bg-ink/60 backdrop-blur-xl">
+  <nav class="mx-auto flex h-16 max-w-6xl items-center justify-between px-5" aria-label="Primary">
+    <a href="#" class="flex items-center gap-2 text-white">
+      <span class="grid h-7 w-7 place-items-center rounded-md border border-shield/40 bg-shield/10">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      </span>
+      <span class="text-[15px] font-semibold tracking-tight">PayShield</span>
     </a>
-    <div class="hidden gap-8 text-sm font-medium text-slate-400 md:flex">
-      <a href="#features" class="hover:text-white">Features</a>
-      <a href="#stats" class="hover:text-white">Why PayShield</a>
-      <a href="#pricing" class="hover:text-white">Pricing</a>
+    <div class="hidden items-center gap-8 text-sm text-zinc-400 md:flex">
+      <a href="#features" class="transition-colors hover:text-white">Features</a>
+      <a href="#pricing" class="transition-colors hover:text-white">Pricing</a>
+      <a href="#blacklist" class="transition-colors hover:text-white">Blacklist Directory</a>
     </div>
-    <a href="dashboard.html" class="your-tailwind-button-styles-here">Launch Free Dashboard</a>
+    <div class="flex items-center gap-2">
+      <a href="#pricing" class="glow-blue hidden rounded-lg bg-shield px-4 py-2 text-sm font-medium text-white transition-all sm:inline-flex">Launch Free Dashboard</a>
+      <button id="menuBtn" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-zinc-300 md:hidden" aria-expanded="false" aria-controls="mobileMenu" aria-label="Toggle menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
   </nav>
+  <div id="mobileMenu" class="hidden border-t border-white/[0.06] px-5 pb-5 pt-3 md:hidden">
+    <div class="flex flex-col gap-1 text-sm">
+      <a href="#features" class="rounded-md px-2 py-2.5 text-zinc-300 hover:bg-white/5">Features</a>
+      <a href="#pricing" class="rounded-md px-2 py-2.5 text-zinc-300 hover:bg-white/5">Pricing</a>
+      <a href="#blacklist" class="rounded-md px-2 py-2.5 text-zinc-300 hover:bg-white/5">Blacklist Directory</a>
+      <a href="#pricing" class="glow-blue mt-2 rounded-lg bg-shield px-4 py-2.5 text-center font-medium text-white">Launch Free Dashboard</a>
+    </div>
+  </div>
 </header>
 
-<!-- Hero -->
-<section id="features" class="relative">
-  <div class="bg-hero pointer-events-none absolute inset-0"></div>
-  <div class="bg-grid pointer-events-none absolute inset-0"></div>
-  <div class="relative mx-auto grid max-w-6xl items-center gap-14 px-6 pb-24 pt-20 lg:grid-cols-2 lg:pt-28">
+<main>
+<!-- HERO -->
+<section class="relative overflow-hidden">
+  <div class="grid-bg pointer-events-none absolute inset-0" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute left-1/2 top-[-220px] h-[620px] w-[1000px] -translate-x-1/2 rounded-full opacity-60 blur-3xl" style="background:radial-gradient(closest-side, rgba(59,130,246,.35), transparent)" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute right-[-120px] top-[380px] h-[380px] w-[380px] rounded-full opacity-40 blur-3xl" style="background:radial-gradient(closest-side, rgba(239,68,68,.28), transparent)" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-6xl px-5 pb-20 pt-20 sm:pt-28">
+    <div class="fade-up hero-copy mx-auto max-w-3xl text-center">
+      <a href="#features" class="hero-eyebrow inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] py-1 pl-1 pr-3 text-xs text-zinc-400 transition-colors hover:border-white/20">
+        <span class="rounded-full bg-alarm/15 px-2 py-0.5 font-medium text-alarm-light">New</span>
+        Escalation engine v2 with legal templates
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
+      <h1 class="hero-title mt-7 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl">
+        Stop Letting Late Clients Treat You Like a <span class="free-bank relative whitespace-nowrap bg-gradient-to-b from-white to-zinc-500 bg-clip-text text-transparent">Free Bank.</span>
+      </h1>
+      <p class="mx-auto mt-6 max-w-xl text-pretty text-base leading-relaxed text-zinc-400 sm:text-lg">
+        Automate your invoice collections. Move from polite nudges to escalating legal warnings effortlessly.
+      </p>
+      <div class="hero-actions mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <a href="#pricing" class="glow-blue inline-flex w-full items-center justify-center gap-2 rounded-lg bg-shield px-6 py-3 text-sm font-medium text-white transition-all sm:w-auto">
+          Launch Free Dashboard
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="#demo" class="inline-flex w-full items-center justify-center rounded-lg border border-white/10 bg-white/[0.02] px-6 py-3 text-sm font-medium text-zinc-200 transition-colors hover:bg-white/[0.06] sm:w-auto">See it escalate</a>
+      </div>
+      <p class="mt-5 text-xs text-zinc-500">No card required · Connects to Stripe & Payoneer in 2 clicks</p>
+    </div>
+
+    <!-- LIVE CLIENT BACKGROUND CHECK -->
+    <section class="fade-up relative mx-auto mt-14 max-w-3xl rounded-2xl border border-gray-700/80 bg-[#030712] p-5 shadow-2xl shadow-blue-950/20 sm:p-8" aria-labelledby="background-check-title">
+      <div class="pointer-events-none absolute -inset-px -z-10 rounded-2xl bg-blue-500/10 blur-xl" aria-hidden="true"></div>
+      <div class="text-center">
+        <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-blue-400">Community intelligence</p>
+        <h2 id="background-check-title" class="mt-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">Check a Client Before You Sign</h2>
+        <p class="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-gray-400">Search our community-reported database of non-paying clients and agencies.</p>
+      </div>
+      <form id="backgroundCheckForm" class="mt-7 flex flex-col gap-3 sm:flex-row" role="search">
+        <label for="backgroundCheckInput" class="sr-only">Client or agency name</label>
+        <input id="backgroundCheckInput" type="search" autocomplete="off" placeholder="Type a client or agency name (e.g., Acme Studio)..." class="min-h-12 flex-1 rounded-lg border border-gray-700 bg-gray-950 px-4 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" />
+        <button type="submit" class="glow-blue min-h-12 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white transition hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400">Run Check</button>
+      </form>
+      <div id="backgroundCheckResult" class="mt-4" aria-live="polite" aria-atomic="true"></div>
+    </section>
+
+    <!-- DASHBOARD PREVIEW -->
+    <div id="demo" class="fade-up relative mx-auto mt-16 max-w-5xl scroll-mt-24">
+      <div class="absolute -inset-px rounded-2xl bg-gradient-to-b from-shield/40 via-white/10 to-transparent opacity-70" aria-hidden="true"></div>
+      <div class="dashboard-shell relative overflow-hidden rounded-2xl border border-white/10 bg-ink-900 shadow-2xl shadow-black/60">
+        <!-- window bar -->
+        <div class="flex items-center gap-3 border-b border-white/[0.06] bg-ink-800/80 px-4 py-3">
+          <div class="flex gap-1.5" aria-hidden="true"><span class="h-2.5 w-2.5 rounded-full bg-zinc-700"></span><span class="h-2.5 w-2.5 rounded-full bg-zinc-700"></span><span class="h-2.5 w-2.5 rounded-full bg-zinc-700"></span></div>
+          <div class="dashboard-url mx-auto flex items-center gap-2 rounded-md border border-white/[0.06] bg-ink px-3 py-1 font-mono text-[11px] text-zinc-500">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            app.payshield.io/collections
+          </div>
+          <span class="hidden w-12 sm:block"></span>
+        </div>
+
+        <div class="flex">
+          <!-- sidebar -->
+          <aside class="hidden w-48 shrink-0 border-r border-white/[0.06] p-3 lg:block" aria-label="Dashboard navigation (preview)">
+            <ul class="space-y-0.5 text-[13px]">
+              <li class="flex items-center gap-2.5 rounded-md bg-white/[0.06] px-2.5 py-2 text-white"><span class="h-1.5 w-1.5 rounded-full bg-shield"></span>Collections</li>
+              <li class="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-zinc-500"><span class="h-1.5 w-1.5 rounded-full bg-zinc-700"></span>Invoices</li>
+              <li class="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-zinc-500"><span class="h-1.5 w-1.5 rounded-full bg-zinc-700"></span>Locked Files</li>
+              <li class="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-zinc-500"><span class="h-1.5 w-1.5 rounded-full bg-zinc-700"></span>Blacklist</li>
+              <li class="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-zinc-500"><span class="h-1.5 w-1.5 rounded-full bg-zinc-700"></span>Templates</li>
+            </ul>
+            <div class="mt-6 rounded-lg border border-shield/20 bg-shield/[0.06] p-3">
+              <p class="text-[11px] font-medium text-shield-light">Shield active</p>
+              <p class="mt-1 text-[11px] leading-snug text-zinc-500">4 automations running on autopilot.</p>
+            </div>
+          </aside>
+
+          <div class="dashboard-content min-w-0 flex-1 p-4 sm:p-5">
+            <!-- KPIs -->
+            <div class="dashboard-kpis grid grid-cols-3 gap-2 sm:gap-3">
+              <div class="rounded-lg border border-white/[0.06] bg-ink-800/60 p-3">
+                <p class="text-[10px] uppercase tracking-wider text-zinc-500 sm:text-[11px]">Outstanding</p>
+                <p id="kpiOut" class="mt-1 font-mono text-base font-semibold text-white sm:text-xl">$14,820</p>
+              </div>
+              <div class="rounded-lg border border-white/[0.06] bg-ink-800/60 p-3">
+                <p class="text-[10px] uppercase tracking-wider text-zinc-500 sm:text-[11px]">Recovered</p>
+                <p id="kpiRec" class="mt-1 font-mono text-base font-semibold text-shield-light sm:text-xl">$9,340</p>
+              </div>
+              <div class="rounded-lg border border-white/[0.06] bg-ink-800/60 p-3">
+                <p class="text-[10px] uppercase tracking-wider text-zinc-500 sm:text-[11px]">Critical</p>
+                <p id="kpiCrit" class="mt-1 font-mono text-base font-semibold text-alarm-light sm:text-xl">2</p>
+              </div>
+            </div>
+
+            <div class="mt-4 grid gap-4 md:grid-cols-5">
+              <!-- invoice list -->
+              <div class="md:col-span-3">
+                <div class="mb-2 flex items-center justify-between">
+                  <h2 class="text-[13px] font-medium text-white">Overdue invoices</h2>
+                  <span class="text-[11px] text-zinc-500">Select to inspect</span>
+                </div>
+                <ul id="invoiceList" class="divide-y divide-white/[0.05] overflow-hidden rounded-lg border border-white/[0.06]" role="listbox" aria-label="Overdue invoices"></ul>
+              </div>
+
+              <!-- escalation panel -->
+              <div class="md:col-span-2">
+                <div class="rounded-lg border border-white/[0.06] bg-ink-800/50 p-4">
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0">
+                      <p class="text-[11px] uppercase tracking-wider text-zinc-500">Escalation path</p>
+                      <p id="panelClient" class="mt-1 truncate text-sm font-medium text-white">—</p>
+                    </div>
+                    <span id="panelLock" class="inline-flex shrink-0 items-center gap-1 rounded-md border border-alarm/30 bg-alarm/10 px-2 py-1 text-[10px] font-medium text-alarm-light">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                      Files locked
+                    </span>
+                  </div>
+                  <ol id="stageList" class="mt-4 space-y-3" aria-live="polite"></ol>
+                  <div class="mt-4 rounded-md border border-white/[0.06] bg-ink p-3">
+                    <p class="text-[10px] uppercase tracking-wider text-zinc-500">Next message preview</p>
+                    <p id="msgPreview" class="mt-1.5 text-[12px] leading-relaxed text-zinc-300"></p>
+                  </div>
+                  <div class="escalation-actions mt-4 flex gap-2">
+                    <button id="escalateBtn" class="flex-1 rounded-md bg-alarm/90 px-3 py-2 text-[12px] font-medium text-white transition-colors hover:bg-alarm disabled:cursor-not-allowed disabled:opacity-40">Escalate now</button>
+                    <button id="paidBtn" class="flex-1 rounded-md border border-white/10 px-3 py-2 text-[12px] font-medium text-zinc-200 transition-colors hover:bg-white/5">Simulate payment</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="border-y border-white/[0.06] bg-ink-900/60" aria-labelledby="stats-title">
+  <h2 id="stats-title" class="sr-only">The freelancer payment problem</h2>
+  <div class="mx-auto grid max-w-6xl md:grid-cols-3">
+    <div class="fade-up border-white/[0.06] px-6 py-12 text-center md:border-r md:text-left">
+      <p class="font-mono text-5xl font-semibold tracking-tight text-white">87<span class="text-alarm">%</span></p>
+      <p class="mt-3 text-sm text-zinc-400">of freelancers suffer late payments</p>
+    </div>
+    <div class="fade-up border-t border-white/[0.06] px-6 py-12 text-center md:border-r md:border-t-0 md:text-left">
+      <p class="font-mono text-5xl font-semibold tracking-tight text-white"><span class="text-alarm">$</span>1.2B</p>
+      <p class="mt-3 text-sm text-zinc-400">unrecovered annual creator fees</p>
+    </div>
+    <div class="fade-up border-t border-white/[0.06] px-6 py-12 text-center md:border-t-0 md:text-left">
+      <p class="font-mono text-5xl font-semibold tracking-tight text-white">24<span class="ml-1 text-2xl text-alarm">days</span></p>
+      <p class="mt-3 text-sm text-zinc-400">average spent chasing ghosted invoices</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="relative scroll-mt-20 py-24 sm:py-32" aria-labelledby="features-title">
+  <div class="mx-auto max-w-6xl px-5">
+    <div class="fade-up max-w-2xl">
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-shield-light">Your bodyguard</p>
+      <h2 id="features-title" class="section-heading mt-3 text-balance text-3xl font-semibold tracking-tight text-white sm:text-5xl">Three layers of protection between you and unpaid work.</h2>
+    </div>
+
+    <div class="feature-grid mt-14 grid gap-4 md:grid-cols-3">
+      <!-- Feature 1 -->
+      <article class="feature-card fade-up card-spot group flex flex-col rounded-2xl border border-white/[0.07] bg-ink-900 p-6 transition-colors hover:border-shield/30">
+        <div class="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03]">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+        </div>
+        <h3 class="mt-5 text-lg font-medium text-white">Escalating Automation</h3>
+        <p class="mt-2 text-sm leading-relaxed text-zinc-400">Flows from gentle nudges to strict legal templates dynamically, adapting tone to every day of silence.</p>
+        <div class="mt-6 rounded-lg border border-white/[0.06] bg-ink p-3" role="group" aria-label="Escalation tone demo">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-zinc-500">Days overdue</span>
+            <span id="toneDays" class="font-mono text-white">3</span>
+          </div>
+          <label for="toneRange" class="sr-only">Days overdue</label>
+          <input id="toneRange" type="range" min="1" max="30" value="3" class="mt-2 w-full accent-[#3b82f6]" />
+          <p id="toneLabel" class="mt-2 text-[12px] font-medium text-shield-light">Gentle nudge</p>
+          <p id="toneText" class="mt-1 min-h-[54px] text-[12px] leading-relaxed text-zinc-400"></p>
+        </div>
+      </article>
+
+      <!-- Feature 2 -->
+      <article class="feature-card fade-up card-spot group flex flex-col rounded-2xl border border-white/[0.07] bg-ink-900 p-6 transition-colors hover:border-shield/30">
+        <div class="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03]">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        </div>
+        <h3 class="mt-5 text-lg font-medium text-white">The Pay-to-Unlock System</h3>
+        <p class="mt-2 text-sm leading-relaxed text-zinc-400">Blocks final deliverables until client cards clear Stripe or Payoneer balances. No payment, no files.</p>
+        <div class="mt-6 rounded-lg border border-white/[0.06] bg-ink p-3">
+          <div class="flex items-center gap-3">
+            <div id="fileIcon" class="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-alarm/30 bg-alarm/10 text-alarm-light transition-colors">
+              <svg id="fileLockSvg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-[12px] font-medium text-white">brand-final-v3.zip</p>
+              <p id="fileStatus" class="text-[11px] text-alarm-light">Locked · awaiting $2,400</p>
+            </div>
+          </div>
+          <div class="mt-3 h-1 overflow-hidden rounded-full bg-white/[0.06]"><div id="fileBar" class="h-full w-0 rounded-full bg-shield transition-all duration-1000"></div></div>
+          <button id="unlockBtn" class="mt-3 w-full rounded-md border border-white/10 px-3 py-2 text-[12px] font-medium text-zinc-200 transition-colors hover:bg-white/5">Simulate Stripe charge</button>
+        </div>
+      </article>
+
+      <!-- Feature 3 -->
+      <article id="blacklist" class="fade-up card-spot group flex scroll-mt-24 flex-col rounded-2xl border border-white/[0.07] bg-ink-900 p-6 transition-colors hover:border-shield/30">
+        <div class="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03]">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </div>
+        <h3 class="mt-5 text-lg font-medium text-white">The Freelancer Client Blacklist</h3>
+        <p class="mt-2 text-sm leading-relaxed text-zinc-400">Crowdsourced database to search for bad business reputations before you sign a single contract.</p>
+        <div class="mt-6 rounded-lg border border-white/[0.06] bg-ink p-3">
+          <label for="blSearch" class="sr-only">Search a company</label>
+          <div class="flex items-center gap-2 rounded-md border border-white/10 bg-ink-800 px-2.5 py-1.5 focus-within:border-shield/50">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="blSearch" type="search" placeholder="Try “nimbus” or “apex”" autocomplete="off" class="w-full bg-transparent text-[12px] text-white placeholder:text-zinc-600 focus:outline-none" />
+          </div>
+          <ul id="blResults" class="mt-2 min-h-[84px] space-y-1" aria-live="polite"></ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="relative scroll-mt-20 overflow-hidden border-t border-white/[0.06] py-24 sm:py-32" aria-labelledby="pricing-title">
+  <div class="pointer-events-none absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-50 blur-3xl" style="background:radial-gradient(closest-side, rgba(59,130,246,.3), transparent)" aria-hidden="true"></div>
+  <div class="relative mx-auto max-w-6xl px-5">
+    <div class="fade-up mx-auto max-w-xl text-center">
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-shield-light">Pricing</p>
+      <h2 id="pricing-title" class="section-heading mt-3 text-balance text-3xl font-semibold tracking-tight text-white sm:text-5xl">One plan. Every invoice protected.</h2>
+      <p class="mt-4 text-zinc-400">Recover a single late invoice and PayShield pays for itself for a year.</p>
+    </div>
+
+    <div class="pricing-card fade-up relative mx-auto mt-14 max-w-md">
+      <div class="absolute -inset-px rounded-3xl bg-gradient-to-b from-shield via-shield/20 to-white/5" aria-hidden="true"></div>
+      <div class="relative rounded-3xl bg-ink-900 p-8 sm:p-10">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-medium text-white">Pro Protector Tier</h3>
+          <span class="rounded-full border border-shield/30 bg-shield/10 px-2.5 py-1 text-[11px] font-medium text-shield-light">Most popular</span>
+        </div>
+        <p class="mt-6 flex items-baseline gap-1.5">
+          <span class="price font-mono text-6xl font-semibold tracking-tight text-white">$39</span>
+          <span class="text-zinc-500">/ month</span>
+        </p>
+        <p class="mt-2 text-sm text-zinc-500">Billed monthly. Cancel anytime.</p>
+        <ul class="mt-8 space-y-3.5 text-sm">
+          <li class="flex items-start gap-3"><span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-shield/15"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="3.2" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg></span><span class="text-zinc-200">Unlimited automatic escalations</span></li>
+          <li class="flex items-start gap-3"><span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-shield/15"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="3.2" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg></span><span class="text-zinc-200">Twilio SMS alerts</span></li>
+          <li class="flex items-start gap-3"><span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-shield/15"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="3.2" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg></span><span class="text-zinc-200">Custom legal warnings</span></li>
+          <li class="flex items-start gap-3"><span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-shield/15"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="3.2" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg></span><span class="text-zinc-200">Direct Payoneer settlement routing</span></li>
+        </ul>
+        <a href="#" class="glow-blue mt-10 flex w-full items-center justify-center gap-2 rounded-xl bg-shield px-6 py-3.5 text-sm font-medium text-white transition-all">
+          Start protecting my invoices
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <p class="mt-4 text-center text-xs text-zinc-500">14-day free trial · No card required</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/[0.06] bg-black">
+  <div class="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-12 md:flex-row md:items-center md:justify-between">
     <div>
-      <span class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-slate-400">
-        <span class="h-2 w-2 rounded-full bg-success"></span> Your 24/7 collections bodyguard
-      </span>
-      <h1 class="text-gradient mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight md:text-6xl">Stop Letting Late Clients Treat You Like a Free Bank.</h1>
-      <p class="mt-6 max-w-lg text-lg text-slate-400">PayShield watches every invoice, sends perfectly-timed reminders by email and SMS, and routes cash straight to your account — so you never chase again.</p>
-      <div class="mt-8 flex flex-wrap gap-3">
-        <a href="#pricing" class="glow rounded-lg bg-primary px-6 py-3 font-semibold text-white hover:brightness-110">Launch Free Dashboard</a>
-        <a href="#stats" class="rounded-lg border border-white/10 bg-white/5 px-6 py-3 font-semibold hover:bg-white/10">See the numbers</a>
-      </div>
+      <a href="#" class="flex items-center gap-2 text-white">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        <span class="text-sm font-semibold">PayShield</span>
+      </a>
+      <p class="mt-2 text-xs text-zinc-500">The bodyguard for your freelance revenue.</p>
     </div>
-
-    <!-- Terminal mockup -->
-    <div class="relative">
-      <div class="absolute -inset-4 rounded-3xl bg-primary/20 blur-3xl"></div>
-      <div class="relative overflow-hidden rounded-2xl border border-white/10 bg-card shadow-2xl">
-        <div class="flex items-center gap-2 border-b border-white/10 px-4 py-3">
-          <span class="h-3 w-3 rounded-full bg-danger"></span>
-          <span class="h-3 w-3 rounded-full bg-warn"></span>
-          <span class="h-3 w-3 rounded-full bg-success"></span>
-          <span class="ml-3 font-mono text-xs text-slate-400">payshield — collector.log</span>
-        </div>
-        <div class="space-y-2.5 p-5 font-mono text-[13px]">
-          <div class="flex gap-3"><span class="text-slate-500">09:00:02</span><span class="w-20 shrink-0 font-bold text-slate-400">[SCAN]</span><span>Scanning 14 open invoices…</span></div>
-          <div class="flex gap-3"><span class="text-slate-500">09:00:03</span><span class="w-20 shrink-0 font-bold text-danger">[OVERDUE]</span><span>INV-2041 · Acme Studio · $4,800 · 12 days late</span></div>
-          <div class="flex gap-3"><span class="text-slate-500">09:00:04</span><span class="w-20 shrink-0 font-bold text-primary">[SMS]</span><span>Polite reminder sent to +1 (415) •••-2210</span></div>
-          <div class="flex gap-3"><span class="text-slate-500">09:00:05</span><span class="w-20 shrink-0 font-bold text-primary">[EMAIL]</span><span>Escalation #2 queued for Nova Labs</span></div>
-          <div class="flex gap-3"><span class="text-slate-500">11:42:17</span><span class="w-20 shrink-0 font-bold text-warn">[OPENED]</span><span>Client viewed invoice INV-2041</span></div>
-          <div class="flex gap-3"><span class="text-slate-500">11:58:40</span><span class="w-20 shrink-0 font-bold text-success">[PAID]</span><span>$4,800 received → routed to Payoneer</span></div>
-          <div class="flex gap-3 pt-1"><span class="text-success">➜</span><span class="text-slate-400">watching<span class="animate-pulse">_</span></span></div>
-        </div>
-        <div class="grid grid-cols-2 border-t border-white/10">
-          <div class="border-r border-white/10 p-4"><div class="text-xs text-slate-400">Outstanding</div><div class="text-xl font-bold text-danger">$12,450</div></div>
-          <div class="p-4"><div class="text-xs text-slate-400">Recovered this month</div><div class="text-xl font-bold text-success">$38,920</div></div>
-        </div>
-      </div>
-    </div>
+    <nav aria-label="Footer" class="footer-nav flex flex-wrap gap-x-7 gap-y-3 text-sm text-zinc-500">
+      <a href="#features" class="hover:text-white">Features</a>
+      <a href="#pricing" class="hover:text-white">Pricing</a>
+      <a href="#blacklist" class="hover:text-white">Blacklist</a>
+      <a href="#" class="hover:text-white">Privacy</a>
+      <a href="#" class="hover:text-white">Terms</a>
+      <a href="#" class="hover:text-white">Contact</a>
+    </nav>
   </div>
-</section>
-
-<!-- Stats -->
-<section id="stats" class="mx-auto max-w-6xl px-6 py-20">
-  <h2 class="text-center text-3xl font-extrabold tracking-tight md:text-4xl">Late payments are an epidemic.</h2>
-  <p class="mx-auto mt-3 max-w-xl text-center text-slate-400">The freelance economy runs on trust. Too many clients abuse it.</p>
-  <div class="mt-12 grid gap-5 md:grid-cols-3">
-    <div class="rounded-2xl border border-white/10 bg-card/60 p-8 transition hover:border-primary/40"><div class="text-5xl font-extrabold tracking-tight text-danger">87%</div><div class="mt-3 text-slate-400">of freelancers get paid late</div></div>
-    <div class="rounded-2xl border border-white/10 bg-card/60 p-8 transition hover:border-primary/40"><div class="text-5xl font-extrabold tracking-tight text-danger">$1.2B</div><div class="mt-3 text-slate-400">unrecovered annual creator fees</div></div>
-    <div class="rounded-2xl border border-white/10 bg-card/60 p-8 transition hover:border-primary/40"><div class="text-5xl font-extrabold tracking-tight text-primary">24 days</div><div class="mt-3 text-slate-400">average spent chasing ghosted invoices</div></div>
+  <div class="border-t border-white/[0.04]">
+    <p class="mx-auto max-w-6xl px-5 py-5 text-xs text-zinc-600">© 2026 PayShield Inc. All rights reserved.</p>
   </div>
-</section>
+</footer>
 
-<!-- Pricing -->
-<section id="pricing" class="relative px-6 py-24">
-  <div class="bg-hero pointer-events-none absolute inset-0 opacity-60"></div>
-  <div class="relative mx-auto max-w-md">
-    <h2 class="text-center text-3xl font-extrabold tracking-tight md:text-4xl">One plan. Total protection.</h2>
-    <div class="glow mt-10 rounded-3xl border border-white/10 bg-card p-8">
-      <div class="flex items-center justify-between">
-        <h3 class="text-lg font-bold">Pro Protector Tier</h3>
-        <span class="rounded-full bg-primary/15 px-3 py-1 text-xs font-semibold text-primary">Most popular</span>
-      </div>
-      <div class="mt-6 flex items-end gap-1"><span class="text-5xl font-extrabold">$39</span><span class="pb-1.5 text-slate-400">/ month</span></div>
-      <ul class="mt-8 space-y-4">
-        <li class="flex items-center gap-3"><span class="text-success font-bold">✓</span> Automated text message reminders</li>
-        <li class="flex items-center gap-3"><span class="text-success font-bold">✓</span> Payoneer integration routing</li>
-        <li class="flex items-center gap-3"><span class="text-success font-bold">✓</span> Smart email escalation sequences</li>
-        <li class="flex items-center gap-3"><span class="text-success font-bold">✓</span> Unlimited invoices &amp; clients</li>
-        <li class="flex items-center gap-3"><span class="text-success font-bold">✓</span> Real-time recovery dashboard</li>
-      </ul>
-      <a href="#" class="glow mt-8 block rounded-lg bg-primary py-3 text-center font-semibold text-white hover:brightness-110">Launch Free Dashboard</a>
-      <p class="mt-3 text-center text-xs text-slate-400">14-day free trial · Cancel anytime</p>
-    </div>
-  </div>
-</section>
+<script>
+  // Mobile menu
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => {
+    const open = mobileMenu.classList.toggle('hidden') === false;
+    menuBtn.setAttribute('aria-expanded', String(open));
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { mobileMenu.classList.add('hidden'); menuBtn.setAttribute('aria-expanded','false'); }));
 
-<footer class="border-t border-white/10 py-8 text-center text-sm text-slate-400">© 2026 PayShield. Get paid what you're owed.</footer>
+  // Reveal on scroll
+  const io = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.12 });
+  document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+
+  // Spotlight cards
+  document.querySelectorAll('.card-spot').forEach(card => card.addEventListener('pointermove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--x', (e.clientX - r.left) + 'px');
+    card.style.setProperty('--y', (e.clientY - r.top) + 'px');
+  }));
+
+  // Live community-reported client check (local demo data)
+  const BLACKLIST_STORAGE_KEY = 'payshield_blacklist';
+  const defaultBlacklist = [
+    { clientName: 'Acme Studio', disputedAmount: '$3,200', offenseStatus: 'Unpaid invoice · 47 days overdue' },
+    { clientName: 'Alpha Digital', disputedAmount: '$1,850', offenseStatus: 'Non-payment · Deliverables withheld' },
+  ];
+  function loadBlacklist() {
+    try {
+      const stored = localStorage.getItem(BLACKLIST_STORAGE_KEY);
+      if (!stored) {
+        localStorage.setItem(BLACKLIST_STORAGE_KEY, JSON.stringify(defaultBlacklist));
+        return defaultBlacklist;
+      }
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) return parsed;
+    } catch (error) {
+      // Storage may be unavailable in private or restricted browsing contexts.
+    }
+    return defaultBlacklist;
+  }
+  const backgroundCheckForm = document.getElementById('backgroundCheckForm');
+  const backgroundCheckInput = document.getElementById('backgroundCheckInput');
+  const backgroundCheckResult = document.getElementById('backgroundCheckResult');
+  function renderBackgroundCheck(query) {
+    const normalizedQuery = query.trim().toLocaleLowerCase();
+    if (!normalizedQuery) {
+      backgroundCheckResult.replaceChildren();
+      backgroundCheckInput.focus();
+      return;
+    }
+    const entries = loadBlacklist();
+    const match = entries.find(entry => {
+      const name = typeof entry === 'string' ? entry : entry?.clientName || entry?.name || entry?.client || '';
+      return String(name).trim().toLocaleLowerCase().includes(normalizedQuery);
+    });
+    if (match) {
+      const clientName = typeof match === 'string' ? match : match.clientName || match.name || match.client;
+      const amount = typeof match === 'object' ? match.disputedAmount ?? match.amount ?? 'Not disclosed' : 'Not disclosed';
+      const status = typeof match === 'object' ? match.offenseStatus ?? match.status ?? match.offense ?? 'Community report on file' : 'Community report on file';
+      backgroundCheckResult.innerHTML = `
+        <article class="rounded-xl border border-rose-500/50 bg-rose-950/30 p-4 sm:p-5" role="status">
+          <div class="flex items-start gap-3">
+            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-300" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4m0 4h.01"/><path d="M10.3 3.9 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3l-7.6-13.1a2 2 0 0 0-3.4 0Z"/></svg>
+            </span>
+            <div class="min-w-0 flex-1">
+              <p class="text-xs font-semibold uppercase tracking-wider text-rose-300">Community report found</p>
+              <h3 class="mt-1 break-words text-lg font-semibold text-white"></h3>
+              <dl class="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                <div><dt class="text-xs text-gray-400">Disputed amount</dt><dd class="mt-0.5 font-medium text-gray-100"></dd></div>
+                <div><dt class="text-xs text-gray-400">Offense status</dt><dd class="mt-0.5 font-medium text-rose-200"></dd></div>
+              </dl>
+              <a href="dashboard.html" class="mt-4 inline-flex min-h-10 items-center rounded-lg border border-rose-400/30 bg-rose-500/10 px-4 text-sm font-medium text-rose-100 transition hover:bg-rose-500/20">View Full Community Board</a>
+            </div>
+          </div>
+        </article>`;
+      const card = backgroundCheckResult.querySelector('article');
+      card.querySelector('h3').textContent = String(clientName);
+      const values = card.querySelectorAll('dd');
+      values[0].textContent = String(amount);
+      values[1].textContent = String(status);
+      return;
+    }
+    backgroundCheckResult.innerHTML = `
+      <article class="rounded-xl border border-emerald-500/40 bg-emerald-950/25 p-4 sm:p-5" role="status">
+        <div class="flex items-start gap-3">
+          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-300" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>
+          </span>
+          <div class="flex-1">
+            <h3 class="text-sm font-semibold leading-relaxed text-emerald-100">Clear Record: No community reports found for this client yet</h3>
+            <a href="dashboard.html" class="mt-3 inline-flex min-h-10 items-center rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-4 text-sm font-medium text-emerald-100 transition hover:bg-emerald-500/20">Report a Bad Client</a>
+          </div>
+        </div>
+      </article>`;
+  }
+  backgroundCheckForm.addEventListener('submit', event => {
+    event.preventDefault();
+    renderBackgroundCheck(backgroundCheckInput.value);
+  });
+  backgroundCheckInput.addEventListener('input', () => {
+    if (backgroundCheckInput.value.trim()) renderBackgroundCheck(backgroundCheckInput.value);
+    else backgroundCheckResult.replaceChildren();
+  });
+
+  // Dashboard demo
+  const STAGES = [
+    { name: 'Gentle nudge', day: 'Day 1', msg: n => `Hi ${n}, just a friendly reminder that your invoice is now due. Here's the payment link whenever you're ready.` },
+    { name: 'Firm reminder', day: 'Day 7', msg: n => `${n}, your invoice is now 7 days overdue. Please settle it within 48 hours to keep the project on schedule.` },
+    { name: 'Final notice', day: 'Day 14', msg: n => `Final notice: ${n}, deliverables remain locked and a late fee of 5% has been applied per our agreement.` },
+    { name: 'Legal warning', day: 'Day 21', msg: n => `Formal notice to ${n}: failure to pay within 7 days will result in referral to collections and small claims proceedings.` },
+  ];
+  const invoices = [
+    { id: 'INV-2041', client: 'Nimbus Studio', amount: 4200, days: 23, stage: 3 },
+    { id: 'INV-2038', client: 'Apex Growth Co.', amount: 2400, days: 15, stage: 2 },
+    { id: 'INV-2044', client: 'Lumen Labs', amount: 6800, days: 8, stage: 1 },
+    { id: 'INV-2047', client: 'Orbit Media', amount: 1420, days: 2, stage: 0 },
+  ];
+  let recovered = 9340;
+  let selected = 0;
+  const fmt = n => '$' + n.toLocaleString('en-US');
+  const stageColor = s => s >= 3 ? 'border-alarm/40 bg-alarm/15 text-alarm-light' : s === 2 ? 'border-orange-400/30 bg-orange-400/10 text-orange-300' : s === 1 ? 'border-amber-300/25 bg-amber-300/10 text-amber-200' : 'border-shield/30 bg-shield/10 text-shield-light';
+
+  const listEl = document.getElementById('invoiceList');
+  const stageEl = document.getElementById('stageList');
+  const escBtn = document.getElementById('escalateBtn');
+  const paidBtn = document.getElementById('paidBtn');
+
+  function renderList() {
+    listEl.innerHTML = '';
+    invoices.forEach((inv, i) => {
+      const li = document.createElement('li');
+      const paid = inv.paid;
+      li.innerHTML = `
+        <button role="option" aria-selected="${i === selected}" class="invoice-row flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors ${i === selected ? 'bg-white/[0.05]' : 'hover:bg-white/[0.03]'}">
+          <span class="relative grid h-2 w-2 shrink-0 place-items-center">
+            <span class="relative h-2 w-2 rounded-full ${paid ? 'bg-emerald-400' : inv.stage >= 3 ? 'pulse-ring bg-alarm text-alarm' : 'bg-zinc-600'}"></span>
+          </span>
+          <span class="min-w-0 flex-1">
+            <span class="block truncate text-[13px] ${paid ? 'text-zinc-500 line-through' : 'text-white'}">${inv.client}</span>
+            <span class="block font-mono text-[10px] text-zinc-500">${inv.id} · ${paid ? 'paid' : inv.days + 'd late'}</span>
+          </span>
+          <span class="hidden rounded border px-1.5 py-0.5 text-[10px] font-medium sm:inline ${paid ? 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300' : stageColor(inv.stage)}">${paid ? 'Recovered' : STAGES[inv.stage].name}</span>
+          <span class="invoice-amount font-mono text-[12px] ${paid ? 'text-zinc-500' : 'text-zinc-200'}">${fmt(inv.amount)}</span>
+        </button>`;
+      li.querySelector('button').addEventListener('click', () => { selected = i; render(); });
+      listEl.appendChild(li);
+    });
+  }
+
+  function renderPanel() {
+    const inv = invoices[selected];
+    document.getElementById('panelClient').textContent = `${inv.client} · ${fmt(inv.amount)}`;
+    const lock = document.getElementById('panelLock');
+    if (inv.paid) {
+      lock.className = 'inline-flex shrink-0 items-center gap-1 rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 text-[10px] font-medium text-emerald-300';
+      lock.lastChild.textContent = ' Files released';
+    } else {
+      lock.className = 'inline-flex shrink-0 items-center gap-1 rounded-md border border-alarm/30 bg-alarm/10 px-2 py-1 text-[10px] font-medium text-alarm-light';
+      lock.lastChild.textContent = ' Files locked';
+    }
+    stageEl.innerHTML = STAGES.map((s, i) => {
+      const done = !inv.paid && i < inv.stage;
+      const active = !inv.paid && i === inv.stage;
+      const danger = i >= 3;
+      const dot = active ? (danger ? 'bg-alarm ring-4 ring-alarm/20' : 'bg-shield ring-4 ring-shield/20') : done ? 'bg-zinc-400' : 'bg-zinc-700';
+      return `<li class="flex items-center gap-3">
+        <span class="h-2.5 w-2.5 shrink-0 rounded-full ${dot}"></span>
+        <span class="flex-1 text-[12px] ${active ? (danger ? 'font-medium text-alarm-light' : 'font-medium text-white') : done ? 'text-zinc-400' : 'text-zinc-600'}">${s.name}</span>
+        <span class="font-mono text-[10px] text-zinc-600">${s.day}</span>
+      </li>`;
+    }).join('');
+    document.getElementById('msgPreview').textContent = inv.paid
+      ? `Payment of ${fmt(inv.amount)} cleared via Stripe. Deliverables have been released to ${inv.client} automatically.`
+      : STAGES[Math.min(inv.stage + 1, 3)].msg(inv.client);
+    escBtn.disabled = inv.paid || inv.stage >= 3;
+    escBtn.textContent = inv.stage >= 3 && !inv.paid ? 'Max escalation' : 'Escalate now';
+    paidBtn.disabled = inv.paid;
+    paidBtn.classList.toggle('opacity-40', !!inv.paid);
+  }
+
+  function renderKpis() {
+    const open = invoices.filter(i => !i.paid);
+    document.getElementById('kpiOut').textContent = fmt(open.reduce((a, b) => a + b.amount, 0));
+    document.getElementById('kpiRec').textContent = fmt(recovered);
+    document.getElementById('kpiCrit').textContent = open.filter(i => i.stage >= 3).length;
+  }
+
+  function render() { renderList(); renderPanel(); renderKpis(); }
+
+  escBtn.addEventListener('click', () => { const inv = invoices[selected]; if (inv.stage < 3) { inv.stage++; inv.days = Math.max(inv.days, [1,7,14,21][inv.stage]); render(); } });
+  paidBtn.addEventListener('click', () => { const inv = invoices[selected]; if (!inv.paid) { inv.paid = true; recovered += inv.amount; render(); } });
+  render();
+
+  // Tone slider
+  const toneRange = document.getElementById('toneRange');
+  function renderTone() {
+    const d = +toneRange.value;
+    const idx = d >= 21 ? 3 : d >= 14 ? 2 : d >= 7 ? 1 : 0;
+    document.getElementById('toneDays').textContent = d;
+    const label = document.getElementById('toneLabel');
+    label.textContent = STAGES[idx].name;
+    label.className = 'mt-2 text-[12px] font-medium ' + (idx === 3 ? 'text-alarm-light' : idx === 2 ? 'text-orange-300' : idx === 1 ? 'text-amber-200' : 'text-shield-light');
+    document.getElementById('toneText').textContent = STAGES[idx].msg('Alex');
+  }
+  toneRange.addEventListener('input', renderTone);
+  renderTone();
+
+  // Pay-to-unlock
+  const unlockBtn = document.getElementById('unlockBtn');
+  let unlocked = false;
+  unlockBtn.addEventListener('click', () => {
+    const icon = document.getElementById('fileIcon'), status = document.getElementById('fileStatus'), bar = document.getElementById('fileBar');
+    if (!unlocked) {
+      unlockBtn.disabled = true;
+      status.textContent = 'Processing charge…';
+      status.className = 'text-[11px] text-zinc-400';
+      bar.style.width = '100%';
+      setTimeout(() => {
+        unlocked = true;
+        icon.className = 'grid h-10 w-10 shrink-0 place-items-center rounded-md border border-shield/40 bg-shield/10 text-shield-light transition-colors';
+        icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.6-1.8"/></svg>';
+        status.textContent = 'Unlocked · $2,400 cleared';
+        status.className = 'text-[11px] text-shield-light';
+        unlockBtn.textContent = 'Reset demo';
+        unlockBtn.disabled = false;
+      }, 1000);
+    } else {
+      unlocked = false;
+      bar.style.transition = 'none'; bar.style.width = '0'; requestAnimationFrame(() => bar.style.transition = '');
+      icon.className = 'grid h-10 w-10 shrink-0 place-items-center rounded-md border border-alarm/30 bg-alarm/10 text-alarm-light transition-colors';
+      icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+      status.textContent = 'Locked · awaiting $2,400';
+      status.className = 'text-[11px] text-alarm-light';
+      unlockBtn.textContent = 'Simulate Stripe charge';
+    }
+  });
+
+  // Blacklist search
+  const BL = [
+    { name: 'Nimbus Studio', reports: 14, risk: 'High', note: 'Avg. 62 days late' },
+    { name: 'Apex Growth Co.', reports: 9, risk: 'High', note: 'Ghosts after delivery' },
+    { name: 'Apex Digital', reports: 1, risk: 'Low', note: 'Resolved dispute' },
+    { name: 'Lumen Labs', reports: 3, risk: 'Medium', note: 'Slow on final milestone' },
+    { name: 'Northwind Agency', reports: 0, risk: 'Clean', note: 'No reports filed' },
+    { name: 'Orbit Media', reports: 5, risk: 'Medium', note: 'Disputes scope late' },
+  ];
+  const riskCls = r => r === 'High' ? 'text-alarm-light bg-alarm/10 border-alarm/30' : r === 'Medium' ? 'text-amber-200 bg-amber-300/10 border-amber-300/25' : r === 'Low' ? 'text-zinc-300 bg-white/5 border-white/10' : 'text-emerald-300 bg-emerald-400/10 border-emerald-400/25';
+  const blSearch = document.getElementById('blSearch'), blResults = document.getElementById('blResults');
+  function renderBL() {
+    const q = blSearch.value.trim().toLowerCase();
+    const rows = (q ? BL.filter(b => b.name.toLowerCase().includes(q)) : BL.slice(0, 2)).slice(0, 3);
+    blResults.innerHTML = rows.length ? rows.map(b => `
+      <li class="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 hover:bg-white/[0.03]">
+        <span class="min-w-0">
+          <span class="block truncate text-[12px] text-white">${b.name}</span>
+          <span class="block text-[10px] text-zinc-500">${b.reports} reports · ${b.note}</span>
+        </span>
+        <span class="shrink-0 rounded border px-1.5 py-0.5 text-[10px] font-medium ${riskCls(b.risk)}">${b.risk}</span>
+      </li>`).join('') : `<li class="px-2 py-3 text-[12px] text-zinc-500">No reports found. Looks clean.</li>`;
+  }
+  blSearch.addEventListener('input', renderBL);
+  renderBL();
+</script>
 </body>
 </html>
