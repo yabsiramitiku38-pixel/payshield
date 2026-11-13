@@ -1,52 +1,668 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PayShield Pro Dashboard</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#09090b" />
+<title>PayShield — Your Freelance Payment Bodyguard</title>
+<meta name="description" content="Automate invoice collections. Move from polite nudges to escalating legal warnings effortlessly." />
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script>tailwind.config={theme:{extend:{colors:{background:'#030712',card:'#0b1120',border:'rgba(255,255,255,.08)',primary:'#4f6df5',muted:'#8b93a7',success:'#34d399',warning:'#fbbf24',destructive:'#f87171'},fontFamily:{sans:['Manrope','ui-sans-serif','system-ui']}}}};</script>
-<style>
-html,body{min-width:0;overflow-x:hidden;background:#030712}body{font-family:Manrope,ui-sans-serif,system-ui;color:#f8fafc}.grad{background:linear-gradient(135deg,#4f6df5,#6a5ae0)}.glow{box-shadow:0 10px 40px -12px rgba(79,109,245,.55)}.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid;border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600;white-space:nowrap}.pill .dot{width:6px;height:6px;border-radius:50%;background:currentColor}.paid{color:#34d399;background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.25);text-shadow:0 0 12px rgba(52,211,153,.8)}.overdue{color:#fb7185;background:rgba(225,29,72,.12);border-color:rgba(225,29,72,.32)}.pending{color:#fbbf24;background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.2)}.slide{display:none}.slide.show{display:block;animation:rise .25s ease both}@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}.drawer{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .3s ease,opacity .2s ease}.drawer.open{grid-template-rows:1fr;opacity:1}.drawer-inner{min-height:0;overflow:hidden}.timeline{position:relative;padding-left:28px}.timeline:before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:linear-gradient(#4f6df5,rgba(79,109,245,.08))}.timeline-item{position:relative}.timeline-item:before{content:'';position:absolute;left:-27px;top:5px;width:15px;height:15px;border-radius:50%;background:#0b1120;border:1px solid rgba(79,109,245,.6);box-shadow:0 0 12px rgba(79,109,245,.35)}.copy{display:none}.copy.open{display:block}.modal{animation:modalIn .22s ease both}@keyframes modalIn{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:none}}img,video{max-width:100%;height:auto}.table-scroll{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}table{min-width:680px}input,select,textarea{color-scheme:dark;max-width:100%}.mobile-menu{display:none}.radar-nav{border:1px solid rgba(244,63,94,.3);background:linear-gradient(110deg,rgba(79,109,245,.12),rgba(225,29,72,.08));box-shadow:0 0 22px rgba(79,109,245,.08)}.radar-pulse{width:8px;height:8px;flex:none;border-radius:50%;background:#fb7185;box-shadow:0 0 0 0 rgba(251,113,133,.65);animation:radarPulse 1.7s infinite}@keyframes radarPulse{70%{box-shadow:0 0 0 7px rgba(251,113,133,0)}100%{box-shadow:0 0 0 0 rgba(251,113,133,0)}}.radar-badge{min-width:22px;height:22px;display:grid;place-items:center;border-radius:999px;background:rgba(225,29,72,.2);color:#fda4af;font-size:11px;font-weight:800;border:1px solid rgba(251,113,133,.3)}
-@media(max-width:767px){.mobile-menu{display:grid}.sidebar{visibility:hidden;transform:translateX(-100%);transition:transform .25s ease,visibility .25s ease;box-shadow:20px 0 50px rgba(0,0,0,.45)}body.menu-open .sidebar{visibility:visible;transform:translateX(0)}body.menu-open:after{content:'';position:fixed;inset:0;z-index:15;background:rgba(0,0,0,.62);backdrop-filter:blur(3px)}body.menu-open{overflow:hidden}.content{padding-left:0}.topbar{height:auto;min-height:64px;padding:12px 16px!important;gap:8px}.topbar-search{display:none}.topbar-actions{gap:8px}.topbar-actions #openModal{padding:9px 10px;font-size:11px}.topbar-actions #openModal svg{display:none}main{padding:20px 16px!important}.stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.stats>div{padding:16px!important;min-width:0}.stats .value{font-size:19px}.section-header{padding:16px!important}.community-grid{grid-template-columns:1fr}.modal-card{max-height:calc(100dvh - 32px);overflow-y:auto;padding:18px!important}.blacklist-actions{width:100%}.blacklist-actions button{flex:1}.community-card{min-width:0}}
-@media(max-width:380px){.stats{grid-template-columns:1fr}.topbar-actions #openModal{max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
-.proof-drop{border:1px dashed rgba(148,163,184,.3);transition:border-color .2s,background .2s}.proof-drop.dragging{border-color:#4f6df5;background:rgba(79,109,245,.08)}.proof-preview img,.proof-preview video{max-height:190px;border-radius:12px;object-fit:contain;background:#030712}.warning-body{position:relative}.warning-content.is-blurred{filter:blur(6px);user-select:none;pointer-events:none}.restricted-cover{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;border:1px solid rgba(244,63,94,.25);border-radius:14px;background:rgba(3,7,18,.88);text-align:center}.evidence-frame img,.evidence-frame video{max-height:72vh;width:auto;max-width:100%;border-radius:14px;object-fit:contain;background:#030712}.flag-choice input{accent-color:#f43f5e}</style>
-</head>
-<body>
-<aside class="sidebar fixed inset-y-0 left-0 z-20 flex w-64 flex-col border-r border-white/10 bg-[#0a0f1e] md:visible md:translate-x-0">
-<div class="flex h-16 items-center gap-2.5 px-6"><div class="grad glow grid size-8 place-items-center rounded-lg"><span class="text-sm font-bold">P</span></div><span class="font-bold tracking-tight">PayShield <span class="text-[#4f6df5]">Pro</span></span></div>
-<nav id="nav" class="mt-4 flex flex-col gap-1 px-3"></nav>
-<div class="m-3 mt-auto rounded-xl border border-white/10 bg-[#0b1120] p-4"><p class="text-xs text-slate-400">Signed in as</p><p class="mt-1 text-sm font-semibold">Yabsira M.</p><p class="text-xs text-[#4f6df5]">Pro plan</p></div></aside>
-<div class="content md:pl-64"><header class="topbar sticky top-0 z-10 flex h-16 items-center justify-between border-b border-white/10 bg-[#030712]/85 px-6 backdrop-blur lg:px-10"><div class="flex min-w-0 flex-1 items-center gap-3"><button id="menuButton" class="mobile-menu grid size-9 shrink-0 place-items-center rounded-lg border border-white/10 bg-[#0b1120] text-slate-300" aria-label="Open navigation"><span class="text-lg">☰</span></button><div class="topbar-search flex w-72 max-w-full items-center gap-2 rounded-lg border border-white/10 bg-[#0b1120] px-3 py-2 text-sm text-slate-400">Search invoices or clients...</div></div><div class="topbar-actions flex items-center gap-3"><button class="grid size-9 place-items-center rounded-lg border border-white/10 bg-[#0b1120] text-slate-400" aria-label="Notifications">•</button><button id="openModal" class="grad glow inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold text-white"><span>+</span> Secure New Invoice</button></div></header>
-<main class="space-y-8 px-6 py-8 lg:px-10"><div><h1 id="pageTitle" class="text-2xl font-bold tracking-tight">Collections Dashboard</h1><p id="pageSub" class="mt-1 text-sm text-slate-400">Monitor protected invoices and automated recovery in real time.</p></div>
-<section id="collectionsView" class="slide show space-y-8"><div id="stats" class="stats grid gap-5 md:grid-cols-3"></div><section class="overflow-hidden rounded-2xl border border-white/10 bg-[#0b1120]"><div class="section-header flex items-center justify-between border-b border-white/10 px-6 py-4"><div><h2 class="font-semibold">Active Invoice Ledger</h2><p id="ledgerCount" class="text-xs text-slate-400"></p></div><button id="clearExamples" class="rounded-lg border border-white/10 px-3 py-2 text-xs font-semibold text-slate-400">Clear examples</button></div><div class="table-scroll"><table class="w-full text-sm"><thead><tr class="text-left text-xs uppercase tracking-wider text-slate-400"><th class="px-6 py-3">Invoice</th><th class="px-6 py-3">Client</th><th class="px-6 py-3">Amount</th><th class="px-6 py-3">Due date</th><th class="px-6 py-3">Status</th><th class="px-6 py-3"></th></tr></thead><tbody id="ledgerBody"></tbody></table></div></section></section>
-<section id="communityView" class="slide space-y-6"><div class="rounded-2xl border border-white/10 bg-gradient-to-br from-[#0b1120] to-[#080d19] p-6"><div class="flex flex-wrap items-start justify-between gap-4"><div><p class="text-xs font-semibold uppercase tracking-[.18em] text-[#4f6df5]">Freelancer network</p><h2 class="mt-2 text-2xl font-bold">Client Warning Radar</h2><p class="mt-1 max-w-2xl text-sm text-slate-400">Check community-shared experiences before you sign. Reports are independent and unverified.</p></div><button id="openBlacklistModalRadar" type="button" class="rounded-xl border border-rose-400/30 bg-rose-500/15 px-4 py-2.5 text-sm font-semibold text-rose-200 shadow-[0_0_24px_rgba(244,63,94,.12)] hover:bg-rose-500/25">+ Post Client Warning</button></div><label class="mt-5 flex items-center gap-3 rounded-xl border border-white/10 bg-[#030712] px-4 py-3"><span class="text-slate-500">⌕</span><input id="communitySearch" class="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-slate-500" placeholder="Search client name, agency, or email before you sign..." aria-label="Search community warnings"></label><p id="communityCount" class="mt-3 text-xs text-slate-500"></p></div><div class="community-grid grid gap-5 lg:grid-cols-[1.35fr_.65fr]"><section class="community-card hidden rounded-2xl border border-white/10 p-5"><form id="communityForm" class="space-y-4"><div><h3 class="font-semibold">Share an experience</h3><p class="mt-1 text-xs text-slate-400">Keep reports factual. Do not include private contact details.</p></div><div class="grid gap-4 sm:grid-cols-2"><label class="block"><span class="text-xs text-slate-400">Agency or client name</span><input id="communityName" required class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#030712] px-3 py-2.5 text-sm outline-none focus:border-[#4f6df5]" placeholder="Northstar Agency"></label><label class="block"><span class="text-xs text-slate-400">Date of experience</span><input id="communityDate" type="date" required class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#030712] px-3 py-2.5 text-sm outline-none focus:border-[#4f6df5]"></label></div><label class="block"><span class="text-xs text-slate-400">Your experience</span><textarea id="communityDescription" required maxlength="1000" rows="4" class="mt-1.5 w-full resize-none rounded-lg border border-white/10 bg-[#030712] px-3 py-2.5 text-sm outline-none focus:border-[#4f6df5]" placeholder="Describe what happened..."></textarea></label><label class="block"><span class="text-xs text-slate-400">Evidence image or video</span><input id="communityEvidence" type="file" accept="image/*,video/*" class="mt-1.5 block w-full rounded-lg border border-white/10 bg-[#030712] px-3 py-2 text-xs text-slate-400"></label><p id="communityMessage" class="hidden rounded-lg border border-white/10 bg-[#030712] px-3 py-2 text-xs text-slate-300"></p><button class="grad w-full rounded-lg py-2.5 text-sm font-semibold">Post to Community</button></form></section><aside class="rounded-2xl border border-white/10 bg-[#0b1120] p-5"><h3 class="font-semibold">Search reports</h3><p class="mt-1 text-xs text-slate-400">Search by agency or client name.</p><input id="communitySearch" class="mt-4 w-full rounded-lg border border-white/10 bg-[#030712] px-3 py-2.5 text-sm outline-none focus:border-[#4f6df5]" placeholder="Search reports..."><div class="mt-5 rounded-xl border border-[#4f6df5]/20 bg-[#4f6df5]/5 p-4 text-xs leading-relaxed text-slate-300">Safety reminder: do not post personal contact information, private messages, or sensitive account data.</div></aside></div><section><div class="mb-3 flex items-center justify-between"><h3 class="font-semibold">Latest reports</h3><p id="communityCount" class="text-xs text-slate-400"></p></div><div id="communityFeed" class="grid gap-4"></div></section></section>
-<section id="blacklistView" class="slide space-y-6"><form id="blacklistSearch" class="flex flex-col gap-3 rounded-2xl border border-white/10 bg-[#0b1120] p-4 sm:flex-row"><input id="blacklistQuery" class="min-w-0 flex-1 rounded-xl border border-white/10 bg-[#030712] px-4 py-3 text-sm outline-none focus:border-[#4f6df5]" placeholder="Search suspicious companies or emails"><div class="blacklist-actions flex flex-col gap-3 sm:flex-row"><button class="rounded-xl bg-[#4f6df5] px-5 py-3 text-sm font-semibold">Verify Client Status</button><button id="openBlacklistModal" type="button" class="rounded-xl border border-rose-400/30 bg-rose-500/10 px-5 py-3 text-sm font-semibold text-rose-300">+ Report Bad Client</button></div></form><div id="blacklistResult"></div><section class="overflow-hidden rounded-2xl border border-white/10 bg-[#0b1120]"><div class="border-b border-white/10 px-6 py-4"><h2 class="font-semibold">Reported Client Ledger</h2><p id="blacklistCount" class="text-xs text-slate-400"></p></div><div id="blacklistList"></div></section></section>
-<section id="placeholderView" class="slide"><section class="grid place-items-center rounded-2xl border border-dashed border-white/10 bg-[#0b1120]/50 py-24"><p class="text-sm text-slate-400">This section is coming soon.</p></section></section></main></div>
-<div id="invoiceModal" class="fixed inset-0 z-50 hidden place-items-center bg-black/75 p-4 backdrop-blur-sm"><div class="modal-card modal w-full max-w-md rounded-2xl border border-white/10 bg-[#0b1120] p-6"><div class="flex items-center justify-between"><h3 class="text-lg font-semibold">Secure New Invoice</h3><button data-close="invoiceModal" class="text-slate-400">Close</button></div><form id="invoiceForm" class="mt-5 space-y-4"><label class="block text-xs text-slate-400">Client name<input id="invoiceClient" required class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#030712] px-3 py-2 text-sm"></label><label class="block text-xs text-slate-400">Client email<input id="invoiceEmail" type="email" required class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#030712] px-3 py-2 text-sm"></label><label class="block text-xs text-slate-400">Amount<input id="invoiceAmount" type="number" min=".01" step=".01" required class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#030712] px-3 py-2 text-sm"></label><label class="block text-xs text-slate-400">Due date<input id="invoiceDue" type="date" required class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#030712] px-3 py-2 text-sm"></label><button class="grad w-full rounded-lg py-2.5 text-sm font-semibold">Activate Protection</button></form></div></div>
-<div id="blacklistModal" class="fixed inset-0 z-50 hidden place-items-center bg-black/75 p-4 backdrop-blur-sm"><div class="modal-card modal w-full max-w-lg rounded-2xl border border-rose-400/20 bg-[#0b1120] p-6"><div class="flex items-start justify-between"><div><p class="text-xs uppercase tracking-[.18em] text-rose-300">Community safety report</p><h3 class="mt-2 text-xl font-bold">Post Client Warning</h3></div><button data-close="blacklistModal" class="text-slate-400">Close</button></div><form id="blacklistForm" class="mt-6 space-y-4"><div class="grid gap-4 sm:grid-cols-2"><label class="text-xs text-slate-400">Company<input id="reportCompany" required class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#030712] px-3 py-2 text-sm"></label><label class="text-xs text-slate-400">Client email<input id="reportEmail" type="email" required class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#030712] px-3 py-2 text-sm"></label></div><div class="grid gap-4 sm:grid-cols-2"><label class="text-xs text-slate-400">Disputed balance<input id="reportAmount" type="number" min="0" step=".01" required class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#030712] px-3 py-2 text-sm"></label><label class="text-xs text-slate-400">Offense<select id="reportCategory" required class="mt-1.5 w-full rounded-lg border border-white/10 bg-[#030712] px-3 py-2 text-sm"><option value="">Select category</option><option>Ghosted Payment</option><option>Contract Breach</option><option>Scope Creep</option><option>Unresponsive</option></select></label></div><label class="block text-xs text-slate-400">Description<textarea id="reportDescription" required rows="4" class="mt-1.5 w-full resize-none rounded-lg border border-white/10 bg-[#030712] px-3 py-2 text-sm"></textarea></label><label class="block text-xs text-slate-400">Attach Proof (Screenshot Image or Short Video Clip)<span id="proofDrop" class="proof-drop mt-2 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl bg-[#030712] px-4 py-5 text-center"><span class="text-sm font-medium text-slate-200">Drop a file here or <span class="text-blue-300 underline">browse</span></span><span class="text-xs text-slate-500">PNG, JPG, MP4, WebM · up to 10 MB</span><input id="reportProof" type="file" accept="image/png,image/jpeg,video/mp4,video/webm" class="sr-only"></span><span id="proofPreview" class="proof-preview mt-3 block"></span><span class="mt-2 block text-[11px] leading-5 text-amber-200/80">Blur personal phone numbers or private addresses before uploading.</span></label><label class="flex items-start gap-2 text-xs text-slate-300"><input id="restrictImmediately" type="checkbox" class="mt-0.5 accent-rose-500"><span>Restrict Immediately if this report appears suspicious</span></label><p class="text-xs leading-5 text-slate-500">Reports reflect independent freelancer experiences. Avoid uploading sensitive personal information.</p><button class="w-full rounded-lg bg-rose-500 py-2.5 text-sm font-semibold text-white shadow-[0_0_22px_rgba(244,63,94,.18)]">Submit Client Warning</button></form></div></div>
-<div id="flagModal" class="fixed inset-0 z-[60] hidden place-items-center bg-black/80 p-4 backdrop-blur-sm"><div class="modal w-full max-w-md rounded-2xl border border-rose-400/20 bg-[#0b1120] p-6 shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="flagTitle"><div class="flex items-start justify-between"><div><p class="text-xs uppercase tracking-[.18em] text-rose-300">Community moderation</p><h3 id="flagTitle" class="mt-2 text-lg font-bold">Flag suspicious activity</h3></div><button type="button" data-close="flagModal" class="text-slate-400">Close</button></div><form id="flagForm" class="mt-5 space-y-3"><label class="flag-choice flex cursor-pointer gap-3 rounded-xl border border-white/10 p-3 text-sm"><input type="radio" name="flagReason" value="Fake / Spam Report" required><span>Fake / Spam Report</span></label><label class="flag-choice flex cursor-pointer gap-3 rounded-xl border border-white/10 p-3 text-sm"><input type="radio" name="flagReason" value="Doxxing / Private Info"><span>Doxxing / Private Info</span></label><label class="flag-choice flex cursor-pointer gap-3 rounded-xl border border-white/10 p-3 text-sm"><input type="radio" name="flagReason" value="Harassment / Sus Activity"><span>Harassment / Sus Activity</span></label><label class="flex items-start gap-2 pt-1 text-xs text-slate-300"><input id="flagRestrictImmediately" type="checkbox" class="mt-0.5 accent-rose-500"><span>Restrict Immediately</span></label><button class="w-full rounded-lg bg-rose-500 py-2.5 text-sm font-semibold text-white">Submit Flag</button></form></div></div>
-<div id="evidenceModal" class="fixed inset-0 z-[70] hidden place-items-center bg-black/85 p-4 backdrop-blur-md"><div class="modal w-full max-w-4xl rounded-2xl border border-white/10 bg-[#0b1120] p-4 sm:p-6" role="dialog" aria-modal="true" aria-label="Attached evidence"><div class="mb-4 flex items-center justify-between"><h3 class="font-semibold">Attached Evidence</h3><button type="button" data-close="evidenceModal" class="rounded-lg border border-white/10 px-3 py-2 text-sm text-slate-300">Close</button></div><div id="evidenceFrame" class="evidence-frame grid min-h-40 place-items-center overflow-hidden rounded-xl bg-[#030712] p-3"></div></div></div>
 <script>
-(function(){'use strict';
-var invoiceKey='payshield_invoices', communityKey='payshield_community', blacklistKey='payshield_blacklist';
-var seed=[{id:'INV-2041',client:'Acme Corp',email:'billing@acme.com',amount:3200,due:'2026-10-27',status:'PENDING'},{id:'INV-2038',client:'Globex Industries',email:'ap@globex.com',amount:1500,due:'2026-10-18',status:'PENDING'},{id:'INV-2044',client:'Initech GmbH',email:'finance@initech.de',amount:4750,due:'2026-11-02',status:'PENDING'}];
-function read(k,f){try{var x=JSON.parse(localStorage.getItem(k));return Array.isArray(x)?x:f.slice()}catch(e){return f.slice()}}function save(k,x){try{localStorage.setItem(k,JSON.stringify(x))}catch(e){}}
-var invoices=read(invoiceKey,seed), reports=read(communityKey,[]), blacklist=read(blacklistKey,[]);var videoPreviews=Object.create(null),revealedWarnings=Object.create(null),pendingFlag=null,pendingProof=null;
-var navItems=['Collections Dashboard','My Invoices','Client Blacklist Directory','Community','Payment Settings'];
-function money(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}function esc(x){var d=document.createElement('div');d.textContent=x;return d.innerHTML}function fmtDate(x){return new Date(x+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
-function show(id){['collectionsView','communityView','blacklistView','placeholderView'].forEach(function(x){document.getElementById(x).classList.toggle('show',x===id)});}
-function renderNav(){var n=document.getElementById('nav');n.innerHTML='';navItems.forEach(function(label,i){var active=i===0;var radar=label==='Community';var b=document.createElement('button');b.className='flex items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium '+(active?'bg-[#4f6df5]/10 text-white':'text-slate-400 hover:bg-white/5 hover:text-white')+(radar?' radar-nav':'');b.innerHTML=radar?'<span class="radar-pulse"></span><span class="flex-1">🛡️ Client Radar</span><span id="radarBadge" class="radar-badge">'+(blacklist.length+reports.length)+'</span>':'<span class="size-2 rounded-full '+(active?'bg-[#4f6df5]':'bg-slate-600')+'"></span><span>'+label+'</span>';b.onclick=function(){Array.from(n.children).forEach(function(x,j){x.className='flex items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium '+(j===i?'bg-[#4f6df5]/10 text-white':'text-slate-400 hover:bg-white/5 hover:text-white')+(navItems[j]==='Community'?' radar-nav':'')});document.getElementById('pageTitle').textContent=radar?'Client Warning Radar':label;show(label==='Collections Dashboard'||label==='My Invoices'?'collectionsView':radar?'communityView':label==='Client Blacklist Directory'?'blacklistView':'placeholderView');document.body.classList.remove('menu-open')};n.appendChild(b)})}
-function renderStats(){var total=0,pending=0,overdue=0;invoices.forEach(function(x){total+=+x.amount||0;if(x.status!=='PAID')pending+=+x.amount||0;if(x.status==='OVERDUE')overdue+=+x.amount||0});var cards=[['Total Protected Funds',money(total),'text-[#4f6df5]'],['Pending Balance',money(pending),'text-amber-300'],['Critically Overdue',money(overdue),'text-rose-300'],['Auto-Recovered This Month','$8,420.00','text-emerald-300']];document.getElementById('stats').innerHTML=cards.map(function(c){return '<div class="rounded-2xl border border-white/10 bg-[#0b1120] p-6"><div class="flex items-center justify-between"><p class="text-sm text-slate-400">'+c[0]+'</p><span class="'+c[2]+'">●</span></div><p class="value mt-4 text-3xl font-bold tabular-nums">'+c[1]+'</p><p class="mt-1 text-xs text-slate-400">Updated instantly</p></div>'}).join('')}
-function renderInvoices(){var body=document.getElementById('ledgerBody');body.innerHTML='';document.getElementById('ledgerCount').textContent=invoices.length+' invoices under protection';invoices.forEach(function(inv){var tr=document.createElement('tr');tr.className='border-t border-white/10 hover:bg-white/5';var tag=inv.status==='PAID'?'paid':inv.status==='OVERDUE'?'overdue':'pending';tr.innerHTML='<td class="px-6 py-4 font-mono text-xs text-slate-400">'+esc(inv.id)+'</td><td class="px-6 py-4"><span class="font-medium">'+esc(inv.client)+'</span><p class="text-xs text-slate-400">'+esc(inv.email)+'</p></td><td class="px-6 py-4 font-semibold">'+money(inv.amount)+'</td><td class="px-6 py-4 text-slate-400">'+fmtDate(inv.due)+'</td><td class="px-6 py-4"><span class="pill '+tag+'"><span class="dot"></span>'+inv.status+'</span></td><td class="px-6 py-4"><div class="flex flex-wrap justify-end gap-2"><button data-paid class="rounded-lg border border-emerald-400/20 px-2.5 py-1.5 text-xs text-emerald-300">Mark as Paid</button><button data-overdue class="rounded-lg border border-rose-400/20 px-2.5 py-1.5 text-xs text-rose-300">Mark Overdue</button><button data-delete aria-label="Delete invoice" class="rounded-lg border border-white/10 px-2.5 py-1.5 text-xs text-slate-400">Delete</button></div></td>';tr.querySelector('[data-paid]').onclick=function(){invoices=invoices.map(function(x){return x.id===inv.id?Object.assign({},x,{status:'PAID'}):x});save(invoiceKey,invoices);renderAll()};tr.querySelector('[data-overdue]').onclick=function(){invoices=invoices.map(function(x){return x.id===inv.id?Object.assign({},x,{status:'OVERDUE'}):x});save(invoiceKey,invoices);renderAll()};tr.querySelector('[data-delete]').onclick=function(){invoices=invoices.filter(function(x){return x.id!==inv.id});save(invoiceKey,invoices);renderAll()};body.appendChild(tr)})}
-function renderBlacklist(list){var box=document.getElementById('blacklistList');document.getElementById('blacklistCount').textContent=list.length+' entries on record';box.innerHTML=list.length?list.map(function(x){return '<div class="border-t border-white/10 px-6 py-4"><div class="flex flex-wrap items-center gap-4"><div class="min-w-[180px] flex-1"><p class="font-medium">'+esc(x.company)+'</p><p class="text-xs text-slate-400">'+esc(x.email)+'</p></div><span class="text-sm">'+money(x.amount)+'</span><span class="pill overdue">'+esc(x.category)+'</span><button data-evidence="'+esc(x.id)+'" class="text-xs text-[#4f6df5]">View Evidence</button></div><div id="e-'+esc(x.id)+'" class="hidden mt-3 rounded-xl border border-white/10 bg-[#030712] p-4 text-sm text-slate-300">'+esc(x.description)+'</div></div>'}).join(''):'<div class="px-6 py-10 text-center text-sm text-slate-400">No reported clients yet.</div>';box.querySelectorAll('[data-evidence]').forEach(function(b){b.onclick=function(){document.getElementById('e-'+b.dataset.evidence).classList.toggle('hidden')}})}
-function updateRecord(source,id,mutate){var collection=source==='blacklist'?blacklist:reports;collection=collection.map(function(record){if(String(record.id)===String(id)){record=Object.assign({},record);mutate(record)}return record});if(source==='blacklist')blacklist=collection;else reports=collection;save(source==='blacklist'?blacklistKey:communityKey,collection)}function resetProof(){if(pendingProof&&pendingProof.type==='video'&&pendingProof.previewUrl)URL.revokeObjectURL(pendingProof.previewUrl);pendingProof=null;document.getElementById('reportProof').value='';document.getElementById('proofPreview').innerHTML=''}function previewProof(file){var preview=document.getElementById('proofPreview'),mime=file.type,ext=file.name.split('.').pop().toLowerCase();if(!mime)mime=ext==='png'?'image/png':ext==='jpg'||ext==='jpeg'?'image/jpeg':ext==='mp4'?'video/mp4':ext==='webm'?'video/webm':'';if(!['image/png','image/jpeg','video/mp4','video/webm'].includes(mime)){preview.innerHTML='<span class="text-xs text-rose-300">Choose a PNG, JPG, MP4, or WebM file.</span>';return}if(file.size>10000000){preview.innerHTML='<span class="text-xs text-rose-300">The attachment must be smaller than 10 MB.</span>';return}if(mime.indexOf('image/')===0){if(file.size>1500000){preview.innerHTML='<span class="text-xs text-rose-300">Images must be 1.5 MB or smaller to fit safely in local browser storage.</span>';return}var reader=new FileReader();reader.onload=function(){pendingProof={type:'image',name:file.name,dataUrl:reader.result};preview.innerHTML='<img src="'+esc(reader.result)+'" alt="Selected proof preview"><span class="mt-2 block text-xs text-slate-500">'+esc(file.name)+'</span>'};reader.onerror=function(){preview.innerHTML='<span class="text-xs text-rose-300">Could not read this file. Please try another.</span>'};reader.readAsDataURL(file)}else{var url=URL.createObjectURL(file);pendingProof={type:'video',name:file.name,previewUrl:url};preview.innerHTML='<video controls playsinline src="'+esc(url)+'"></video><span class="mt-2 block text-xs text-slate-500">'+esc(file.name)+' · preview is temporary and lasts until refresh</span>'}}function renderCommunity(){var input=document.getElementById('communitySearch'),q=(input&&input.value||'').trim().toLowerCase();var items=blacklist.map(function(x){return {id:String(x.id),source:'blacklist',name:x.company||'Unknown client',email:x.email||'',category:x.category||'Client warning',amount:x.amount||0,date:x.date||x.createdAt||'',description:x.description||'',votes:Number(x.votes)||0,flagCount:Number(x.flagCount)||0,restricted:!!x.restricted,proof:x.proof||null}}).concat(reports.map(function(x){return {id:String(x.id),source:'community',name:x.name||'Unknown client',email:x.email||'',category:x.category||'Freelancer report',amount:Number(x.amount)||0,date:x.date||'',description:x.description||'',votes:Number(x.votes)||0,flagCount:Number(x.flagCount)||0,restricted:!!x.restricted,proof:x.proof||(x.media?{type:'image',dataUrl:x.media}:null)}}));var list=items.filter(function(x){return !q||(x.name+' '+x.email+' '+x.description).toLowerCase().includes(q)});var feed=document.getElementById('communityFeed');document.getElementById('communityCount').textContent=list.length+' warning'+(list.length===1?'':'s')+' found';feed.innerHTML=list.length?list.map(function(x){var kind=x.category.toLowerCase().indexOf('scope')!==-1?'border-amber-400/25 bg-amber-400/10 text-amber-300':x.category.toLowerCase().indexOf('delay')!==-1?'border-yellow-400/25 bg-yellow-400/10 text-yellow-300':'border-rose-400/25 bg-rose-400/10 text-rose-300',key=x.source+':'+x.id,videoUrl=videoPreviews[key],proof=x.proof&&x.proof.type==='image'&&x.proof.dataUrl?x.proof.dataUrl:(x.proof&&x.proof.type==='video'?videoUrl:'');var isRestricted=x.restricted&&!revealedWarnings[key];return '<article class="community-card relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#0b1120] to-[#080d19] p-5 shadow-[0_12px_36px_rgba(0,0,0,.18)]"><button type="button" data-flag="'+esc(x.id)+'" data-source="'+x.source+'" class="absolute right-4 top-4 z-10 rounded-lg border border-rose-400/20 bg-rose-500/5 px-2.5 py-1.5 text-[11px] font-medium text-rose-200/80 hover:border-rose-400/40 hover:bg-rose-500/10">🚩 Flag / Restrict</button><div class="warning-body mt-10"><div class="warning-content '+(isRestricted?'is-blurred':'')+'"><div class="flex flex-wrap items-start justify-between gap-3 pr-2"><div><h3 class="text-lg font-semibold">'+esc(x.name)+'</h3><p class="mt-1 text-xs text-slate-500">'+esc(x.email||'Community report')+' · Reported '+esc(x.date?fmtDate(x.date):'date not provided')+'</p></div><span class="rounded-full border px-3 py-1 text-xs font-semibold '+kind+'">'+esc(x.category)+'</span></div><div class="mt-5 flex items-center justify-between gap-3"><p class="text-sm text-slate-400">Disputed amount</p><p class="text-lg font-bold tabular-nums">'+money(x.amount)+'</p></div><p class="mt-4 whitespace-pre-wrap text-sm leading-6 text-slate-300">'+esc(x.description)+'</p>'+(x.proof?'<div class="mt-4 flex flex-wrap items-center gap-3"><span class="rounded-full border border-blue-400/20 bg-blue-400/10 px-2.5 py-1 text-[11px] font-semibold text-blue-200">📎 Proof Attached</span><button type="button" data-evidence="'+esc(x.id)+'" data-source="'+x.source+'" class="text-xs font-semibold text-blue-300 underline underline-offset-4">View Evidence</button></div>':'')+'<div class="mt-5 flex items-center justify-between gap-3 border-t border-white/10 pt-4"><span class="text-xs text-slate-500">Independent freelancer experience · Unverified</span><button type="button" data-vote="'+esc(x.id)+'" data-source="'+x.source+'" class="rounded-lg border border-[#4f6df5]/30 bg-[#4f6df5]/10 px-3 py-2 text-xs font-semibold text-blue-200 hover:bg-[#4f6df5]/20">Confirm / Me Too (▲ '+x.votes+')</button></div></div>'+(isRestricted?'<div class="restricted-cover"><p class="text-sm font-semibold text-rose-200">⚠️ Restricted: Under review for suspicious activity</p><button type="button" data-show-anyway="'+esc(key)+'" class="rounded-lg border border-white/15 bg-[#0b1120] px-3 py-2 text-xs font-semibold text-slate-200 hover:bg-white/10">Show Anyway</button></div>':'')+'</div></article>'}).join(''):'<div class="rounded-2xl border border-emerald-400/20 bg-emerald-400/5 p-8 text-center text-sm font-medium text-emerald-300">Clean Record: No community warnings found for this client.</div>';feed.querySelectorAll('[data-flag]').forEach(function(button){button.onclick=function(){pendingFlag={source:button.dataset.source,id:button.dataset.flag};document.getElementById('flagForm').reset();open('flagModal')}});feed.querySelectorAll('[data-show-anyway]').forEach(function(button){button.onclick=function(){revealedWarnings[button.dataset.showAnyway]=true;renderCommunity()}});feed.querySelectorAll('[data-evidence]').forEach(function(button){button.onclick=function(){var key=button.dataset.source+':'+button.dataset.evidence,record=(button.dataset.source==='blacklist'?blacklist:reports).find(function(x){return String(x.id)===button.dataset.evidence}),proof=record&&(record.proof||(record.media?{type:'image',dataUrl:record.media}:null)),url=proof&&proof.type==='image'?proof.dataUrl:(proof&&proof.type==='video'?videoPreviews[key]:'');var frame=document.getElementById('evidenceFrame');frame.innerHTML=url?(proof.type==='video'?'<video controls autoplay playsinline src="'+esc(url)+'"></video>':'<img src="'+esc(url)+'" alt="Attached client report evidence">'):'<p class="p-6 text-center text-sm text-slate-400">This video preview is temporary and is no longer available after the page was refreshed.</p>';open('evidenceModal')}});feed.querySelectorAll('[data-vote]').forEach(function(button){button.onclick=function(){updateRecord(button.dataset.source,button.dataset.vote,function(record){record.votes=(Number(record.votes)||0)+1});renderCommunity()}})}
-function updateRadarBadge(){var badge=document.getElementById('radarBadge');if(badge)badge.textContent=blacklist.length+reports.length}function renderAll(){renderStats();renderInvoices();renderBlacklist(blacklist);renderCommunity();updateRadarBadge()}
-function open(id){var e=document.getElementById(id);e.classList.remove('hidden');e.classList.add('grid')}function close(id){var e=document.getElementById(id);e.classList.add('hidden');e.classList.remove('grid')}
-document.getElementById('menuButton').onclick=function(){document.body.classList.toggle('menu-open')};document.getElementById('openModal').onclick=function(){open('invoiceModal')};document.querySelectorAll('[data-close]').forEach(function(b){b.onclick=function(){close(b.dataset.close)}});document.getElementById('clearExamples').onclick=function(){invoices=[];save(invoiceKey,invoices);renderAll()};document.getElementById('invoiceForm').onsubmit=function(e){e.preventDefault();invoices.push({id:'INV-'+Date.now().toString().slice(-5),client:invoiceClient.value,email:invoiceEmail.value,amount:+invoiceAmount.value,due:invoiceDue.value,status:'PENDING'});save(invoiceKey,invoices);e.target.reset();close('invoiceModal');renderAll()};document.getElementById('openBlacklistModal').onclick=function(){resetProof();open('blacklistModal')};document.getElementById('openBlacklistModalRadar').onclick=function(){resetProof();open('blacklistModal')};document.getElementById('blacklistForm').onsubmit=function(e){e.preventDefault();var reportedAt=new Date().toISOString().slice(0,10),id='r'+Date.now(),proof=pendingProof?{type:pendingProof.type,name:pendingProof.name}:null;if(pendingProof&&pendingProof.type==='image')proof.dataUrl=pendingProof.dataUrl;if(pendingProof&&pendingProof.type==='video')videoPreviews['blacklist:'+id]=pendingProof.previewUrl;blacklist.unshift({id:id,company:document.getElementById('reportCompany').value.trim(),email:document.getElementById('reportEmail').value.trim(),amount:+document.getElementById('reportAmount').value,category:document.getElementById('reportCategory').value,description:document.getElementById('reportDescription').value.trim(),date:reportedAt,votes:0,flagCount:0,restricted:document.getElementById('restrictImmediately').checked,proof:proof});save(blacklistKey,blacklist);pendingProof=null;document.getElementById('proofPreview').innerHTML='';e.target.reset();close('blacklistModal');renderAll()};document.getElementById('flagForm').onsubmit=function(e){e.preventDefault();if(!pendingFlag)return;var reason=document.querySelector('input[name="flagReason"]:checked');if(!reason)return;var key=pendingFlag.source+':'+pendingFlag.id,force=document.getElementById('flagRestrictImmediately').checked;updateRecord(pendingFlag.source,pendingFlag.id,function(record){record.flagCount=(Number(record.flagCount)||0)+1;record.lastFlagReason=reason.value;record.restricted=!!record.restricted||force||record.flagCount>=3});revealedWarnings[key]=false;pendingFlag=null;close('flagModal');renderCommunity()};document.getElementById('reportProof').onchange=function(e){var file=e.target.files&&e.target.files[0];if(file)previewProof(file)};var proofDrop=document.getElementById('proofDrop');proofDrop.ondragover=function(e){e.preventDefault();proofDrop.classList.add('dragging')};proofDrop.ondragleave=function(){proofDrop.classList.remove('dragging')};proofDrop.ondrop=function(e){e.preventDefault();proofDrop.classList.remove('dragging');var file=e.dataTransfer.files&&e.dataTransfer.files[0];if(file)previewProof(file)};document.getElementById('blacklistSearch').onsubmit=function(e){e.preventDefault();var q=blacklistQuery.value.toLowerCase();renderBlacklist(blacklist.filter(function(x){return x.company.toLowerCase().includes(q)||x.email.toLowerCase().includes(q)}))};document.getElementById('communitySearch').oninput=renderCommunity;document.getElementById('communityForm').onsubmit=function(e){e.preventDefault();var f=communityEvidence.files[0],reader=new FileReader();function add(media){reports.unshift({id:'p'+Date.now(),name:communityName.value,date:communityDate.value,description:communityDescription.value,author:'Yabsira M.',media:media||'',votes:0});save(communityKey,reports);e.target.reset();renderCommunity()}if(f&&f.size<2500000){reader.onload=function(){add(reader.result)};reader.readAsDataURL(f)}else add('')};renderNav();renderAll();
-})();
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: { DEFAULT: '#09090b', 900: '#0c0c0f', 800: '#121216', 700: '#18181b', 600: '#27272a', 500: '#3f3f46' },
+          shield: { DEFAULT: '#3b82f6', light: '#60a5fa', dark: '#2563eb' },
+          alarm: { DEFAULT: '#ef4444', light: '#f87171' },
+        },
+        fontFamily: { sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'], mono: ['Geist Mono', 'ui-monospace', 'monospace'] },
+      },
+    },
+  };
 </script>
-</body></html>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+  body { background:#09090b; }
+  img, svg, video, canvas { max-width: 100%; }
+  button, a, input { min-width: 0; }
+  .glow-blue { box-shadow: 0 0 0 1px rgba(59,130,246,.6), 0 0 24px -2px rgba(59,130,246,.65), inset 0 1px 0 rgba(255,255,255,.18); }
+  .glow-blue:hover { box-shadow: 0 0 0 1px rgba(96,165,250,.9), 0 0 36px 0 rgba(59,130,246,.8), inset 0 1px 0 rgba(255,255,255,.25); }
+  .grid-bg {
+    background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 55% at 50% 0%, #000 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 70% 55% at 50% 0%, #000 40%, transparent 100%);
+  }
+  .card-spot { position: relative; isolation: isolate; }
+  .card-spot::before {
+    content:""; position:absolute; inset:0; border-radius:inherit; z-index:-1; opacity:0; transition:opacity .3s;
+    background: radial-gradient(420px circle at var(--x,50%) var(--y,50%), rgba(59,130,246,.14), transparent 45%);
+  }
+  .card-spot:hover::before { opacity:1; }
+  .fade-up { opacity:0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease; }
+  @media (max-width: 639px) {
+    .hero-copy { padding-inline: 0.25rem; }
+    .hero-eyebrow { max-width: 100%; text-align: left; line-height: 1.35; }
+    .hero-title { font-size: clamp(2.15rem, 10.5vw, 3.25rem); line-height: 1.04; letter-spacing: -0.045em; }
+    .hero-title .free-bank { white-space: normal; }
+    .hero-actions > a { min-height: 48px; }
+    .dashboard-shell { border-radius: 1rem; }
+    .dashboard-url { min-width: 0; max-width: 68vw; overflow-wrap: anywhere; text-align: center; }
+    .dashboard-content { padding: 0.75rem; }
+    .dashboard-kpis { gap: 0.375rem; }
+    .dashboard-kpis > div { padding: 0.625rem 0.5rem; }
+    .dashboard-kpis p:first-child { font-size: 0.58rem; letter-spacing: 0.06em; }
+    .dashboard-kpis p:last-child { font-size: 0.9rem; }
+    .invoice-row { gap: 0.5rem; padding-inline: 0.625rem; }
+    .invoice-row .invoice-amount { font-size: 0.68rem; }
+    .escalation-actions { flex-direction: column; }
+    .escalation-actions button { min-height: 44px; }
+    .section-heading { font-size: clamp(2rem, 9vw, 3rem); line-height: 1.08; }
+    .feature-grid { gap: 0.75rem; }
+    .feature-card { padding: 1.125rem; }
+    .pricing-card { padding: 1.375rem; }
+    .pricing-card h3 { font-size: 1rem; }
+    .pricing-card .price { font-size: 3.35rem; }
+    .footer-nav { gap: 0.75rem 1.25rem; }
+  }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .dashboard-content { padding: 1rem; }
+  }
+  .fade-up.in { opacity:1; transform:none; }
+  @media (prefers-reduced-motion: reduce) { .fade-up { opacity:1; transform:none; transition:none; } * { animation:none !important; } }
+  @keyframes pulse-ring { 0% { transform: scale(.8); opacity:.8 } 100% { transform: scale(2.2); opacity:0 } }
+  .pulse-ring::after { content:""; position:absolute; inset:0; border-radius:9999px; background:currentColor; animation:pulse-ring 1.8s ease-out infinite; }
+  ::selection { background: rgba(59,130,246,.35); }
+</style>
+</head>
+<body class="bg-ink text-zinc-300 font-sans antialiased overflow-x-hidden">
+
+<!-- NAV -->
+<header class="sticky top-0 z-50 border-b border-white/[0.06] bg-ink/60 backdrop-blur-xl">
+  <nav class="mx-auto flex h-16 max-w-6xl items-center justify-between px-5" aria-label="Primary">
+    <a href="#" class="flex items-center gap-2 text-white">
+      <span class="grid h-7 w-7 place-items-center rounded-md border border-shield/40 bg-shield/10">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+      </span>
+      <span class="text-[15px] font-semibold tracking-tight">PayShield</span>
+    </a>
+    <div class="hidden items-center gap-8 text-sm text-zinc-400 md:flex">
+      <a href="#features" class="transition-colors hover:text-white">Features</a>
+      <a href="#pricing" class="transition-colors hover:text-white">Pricing</a>
+      <a href="#blacklist" class="transition-colors hover:text-white">Blacklist Directory</a>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="#pricing" class="glow-blue hidden rounded-lg bg-shield px-4 py-2 text-sm font-medium text-white transition-all sm:inline-flex">Launch Dashboard pro</a>
+      <button id="menuBtn" class="grid h-9 w-9 place-items-center rounded-lg border border-white/10 text-zinc-300 md:hidden" aria-expanded="false" aria-controls="mobileMenu" aria-label="Toggle menu">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </nav>
+  <div id="mobileMenu" class="hidden border-t border-white/[0.06] px-5 pb-5 pt-3 md:hidden">
+    <div class="flex flex-col gap-1 text-sm">
+      <a href="#features" class="rounded-md px-2 py-2.5 text-zinc-300 hover:bg-white/5">Features</a>
+      <a href="#pricing" class="rounded-md px-2 py-2.5 text-zinc-300 hover:bg-white/5">Pricing</a>
+      <a href="#blacklist" class="rounded-md px-2 py-2.5 text-zinc-300 hover:bg-white/5">Blacklist Directory</a>
+      <a href="#pricing" class="glow-blue mt-2 rounded-lg bg-shield px-4 py-2.5 text-center font-medium text-white">Launch Dashboard pro</a>
+      <a href="dashboard.html" class="mt-2 rounded-lg border border-shield/40 bg-shield/10 px-4 py-2.5 text-center font-medium text-shield-light transition-colors hover:bg-shield/20">Launch Free Dashboard</a>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- HERO -->
+<section class="relative overflow-hidden">
+  <div class="grid-bg pointer-events-none absolute inset-0" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute left-1/2 top-[-220px] h-[620px] w-[1000px] -translate-x-1/2 rounded-full opacity-60 blur-3xl" style="background:radial-gradient(closest-side, rgba(59,130,246,.35), transparent)" aria-hidden="true"></div>
+  <div class="pointer-events-none absolute right-[-120px] top-[380px] h-[380px] w-[380px] rounded-full opacity-40 blur-3xl" style="background:radial-gradient(closest-side, rgba(239,68,68,.28), transparent)" aria-hidden="true"></div>
+
+  <div class="relative mx-auto max-w-6xl px-5 pb-20 pt-20 sm:pt-28">
+    <div class="fade-up hero-copy mx-auto max-w-3xl text-center">
+      <a href="#features" class="hero-eyebrow inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] py-1 pl-1 pr-3 text-xs text-zinc-400 transition-colors hover:border-white/20">
+        <span class="rounded-full bg-alarm/15 px-2 py-0.5 font-medium text-alarm-light">New</span>
+        Escalation engine v2 with legal templates
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg>
+      </a>
+      <h1 class="hero-title mt-7 text-balance text-4xl font-semibold leading-[1.05] tracking-tight text-white sm:text-6xl md:text-7xl">
+        Stop Letting Late Clients Treat You Like a <span class="free-bank relative whitespace-nowrap bg-gradient-to-b from-white to-zinc-500 bg-clip-text text-transparent">Free Bank.</span>
+      </h1>
+      <p class="mx-auto mt-6 max-w-xl text-pretty text-base leading-relaxed text-zinc-400 sm:text-lg">
+        Automate your invoice collections. Move from polite nudges to escalating legal warnings effortlessly.
+      </p>
+      <div class="hero-actions mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <a href="#pricing" class="glow-blue inline-flex w-full items-center justify-center gap-2 rounded-lg bg-shield px-6 py-3 text-sm font-medium text-white transition-all sm:w-auto">
+          Launch Dashboard pro
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="dashboard.html" class="inline-flex w-full items-center justify-center rounded-lg border border-shield/40 bg-shield/10 px-6 py-3 text-sm font-medium text-shield-light transition-colors hover:bg-shield/20 sm:w-auto">Launch Free Dashboard</a>
+        <a href="#demo" class="inline-flex w-full items-center justify-center rounded-lg border border-white/10 bg-white/[0.02] px-6 py-3 text-sm font-medium text-zinc-200 transition-colors hover:bg-white/[0.06] sm:w-auto">See it escalate</a>
+      </div>
+      <p class="mt-5 text-xs text-zinc-500">No card required · Connects to Stripe & Payoneer in 2 clicks</p>
+    </div>
+
+    <!-- LIVE CLIENT BACKGROUND CHECK -->
+    <section class="fade-up relative mx-auto mt-14 max-w-3xl rounded-2xl border border-gray-700/80 bg-[#030712] p-5 shadow-2xl shadow-blue-950/20 sm:p-8" aria-labelledby="background-check-title">
+      <div class="pointer-events-none absolute -inset-px -z-10 rounded-2xl bg-blue-500/10 blur-xl" aria-hidden="true"></div>
+      <div class="text-center">
+        <p class="font-mono text-[11px] uppercase tracking-[0.2em] text-blue-400">Community intelligence</p>
+        <h2 id="background-check-title" class="mt-2 text-2xl font-semibold tracking-tight text-white sm:text-3xl">Check a Client Before You Sign</h2>
+        <p class="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-gray-400">Search our community-reported database of non-paying clients and agencies.</p>
+      </div>
+      <form id="backgroundCheckForm" class="mt-7 flex flex-col gap-3 sm:flex-row" role="search">
+        <label for="backgroundCheckInput" class="sr-only">Client or agency name</label>
+        <input id="backgroundCheckInput" type="search" autocomplete="off" placeholder="Type a client or agency name (e.g., Acme Studio)..." class="min-h-12 flex-1 rounded-lg border border-gray-700 bg-gray-950 px-4 text-sm text-white outline-none transition placeholder:text-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20" />
+        <button type="submit" class="glow-blue min-h-12 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white transition hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400">Run Check</button>
+      </form>
+      <div id="backgroundCheckResult" class="mt-4" aria-live="polite" aria-atomic="true"></div>
+    </section>
+
+    <!-- DASHBOARD PREVIEW -->
+    <div id="demo" class="fade-up relative mx-auto mt-16 max-w-5xl scroll-mt-24">
+      <div class="absolute -inset-px rounded-2xl bg-gradient-to-b from-shield/40 via-white/10 to-transparent opacity-70" aria-hidden="true"></div>
+      <div class="dashboard-shell relative overflow-hidden rounded-2xl border border-white/10 bg-ink-900 shadow-2xl shadow-black/60">
+        <!-- window bar -->
+        <div class="flex items-center gap-3 border-b border-white/[0.06] bg-ink-800/80 px-4 py-3">
+          <div class="flex gap-1.5" aria-hidden="true"><span class="h-2.5 w-2.5 rounded-full bg-zinc-700"></span><span class="h-2.5 w-2.5 rounded-full bg-zinc-700"></span><span class="h-2.5 w-2.5 rounded-full bg-zinc-700"></span></div>
+          <div class="dashboard-url mx-auto flex items-center gap-2 rounded-md border border-white/[0.06] bg-ink px-3 py-1 font-mono text-[11px] text-zinc-500">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            app.payshield.io/collections
+          </div>
+          <span class="hidden w-12 sm:block"></span>
+        </div>
+
+        <div class="flex">
+          <!-- sidebar -->
+          <aside class="hidden w-48 shrink-0 border-r border-white/[0.06] p-3 lg:block" aria-label="Dashboard navigation (preview)">
+            <ul class="space-y-0.5 text-[13px]">
+              <li class="flex items-center gap-2.5 rounded-md bg-white/[0.06] px-2.5 py-2 text-white"><span class="h-1.5 w-1.5 rounded-full bg-shield"></span>Collections</li>
+              <li class="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-zinc-500"><span class="h-1.5 w-1.5 rounded-full bg-zinc-700"></span>Invoices</li>
+              <li class="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-zinc-500"><span class="h-1.5 w-1.5 rounded-full bg-zinc-700"></span>Locked Files</li>
+              <li class="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-zinc-500"><span class="h-1.5 w-1.5 rounded-full bg-zinc-700"></span>Blacklist</li>
+              <li class="flex items-center gap-2.5 rounded-md px-2.5 py-2 text-zinc-500"><span class="h-1.5 w-1.5 rounded-full bg-zinc-700"></span>Templates</li>
+            </ul>
+            <div class="mt-6 rounded-lg border border-shield/20 bg-shield/[0.06] p-3">
+              <p class="text-[11px] font-medium text-shield-light">Shield active</p>
+              <p class="mt-1 text-[11px] leading-snug text-zinc-500">4 automations running on autopilot.</p>
+            </div>
+          </aside>
+
+          <div class="dashboard-content min-w-0 flex-1 p-4 sm:p-5">
+            <!-- KPIs -->
+            <div class="dashboard-kpis grid grid-cols-3 gap-2 sm:gap-3">
+              <div class="rounded-lg border border-white/[0.06] bg-ink-800/60 p-3">
+                <p class="text-[10px] uppercase tracking-wider text-zinc-500 sm:text-[11px]">Outstanding</p>
+                <p id="kpiOut" class="mt-1 font-mono text-base font-semibold text-white sm:text-xl">$14,820</p>
+              </div>
+              <div class="rounded-lg border border-white/[0.06] bg-ink-800/60 p-3">
+                <p class="text-[10px] uppercase tracking-wider text-zinc-500 sm:text-[11px]">Recovered</p>
+                <p id="kpiRec" class="mt-1 font-mono text-base font-semibold text-shield-light sm:text-xl">$9,340</p>
+              </div>
+              <div class="rounded-lg border border-white/[0.06] bg-ink-800/60 p-3">
+                <p class="text-[10px] uppercase tracking-wider text-zinc-500 sm:text-[11px]">Critical</p>
+                <p id="kpiCrit" class="mt-1 font-mono text-base font-semibold text-alarm-light sm:text-xl">2</p>
+              </div>
+            </div>
+
+            <div class="mt-4 grid gap-4 md:grid-cols-5">
+              <!-- invoice list -->
+              <div class="md:col-span-3">
+                <div class="mb-2 flex items-center justify-between">
+                  <h2 class="text-[13px] font-medium text-white">Overdue invoices</h2>
+                  <span class="text-[11px] text-zinc-500">Select to inspect</span>
+                </div>
+                <ul id="invoiceList" class="divide-y divide-white/[0.05] overflow-hidden rounded-lg border border-white/[0.06]" role="listbox" aria-label="Overdue invoices"></ul>
+              </div>
+
+              <!-- escalation panel -->
+              <div class="md:col-span-2">
+                <div class="rounded-lg border border-white/[0.06] bg-ink-800/50 p-4">
+                  <div class="flex items-start justify-between gap-2">
+                    <div class="min-w-0">
+                      <p class="text-[11px] uppercase tracking-wider text-zinc-500">Escalation path</p>
+                      <p id="panelClient" class="mt-1 truncate text-sm font-medium text-white">—</p>
+                    </div>
+                    <span id="panelLock" class="inline-flex shrink-0 items-center gap-1 rounded-md border border-alarm/30 bg-alarm/10 px-2 py-1 text-[10px] font-medium text-alarm-light">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                      Files locked
+                    </span>
+                  </div>
+                  <ol id="stageList" class="mt-4 space-y-3" aria-live="polite"></ol>
+                  <div class="mt-4 rounded-md border border-white/[0.06] bg-ink p-3">
+                    <p class="text-[10px] uppercase tracking-wider text-zinc-500">Next message preview</p>
+                    <p id="msgPreview" class="mt-1.5 text-[12px] leading-relaxed text-zinc-300"></p>
+                  </div>
+                  <div class="escalation-actions mt-4 flex gap-2">
+                    <button id="escalateBtn" class="flex-1 rounded-md bg-alarm/90 px-3 py-2 text-[12px] font-medium text-white transition-colors hover:bg-alarm disabled:cursor-not-allowed disabled:opacity-40">Escalate now</button>
+                    <button id="paidBtn" class="flex-1 rounded-md border border-white/10 px-3 py-2 text-[12px] font-medium text-zinc-200 transition-colors hover:bg-white/5">Simulate payment</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="border-y border-white/[0.06] bg-ink-900/60" aria-labelledby="stats-title">
+  <h2 id="stats-title" class="sr-only">The freelancer payment problem</h2>
+  <div class="mx-auto grid max-w-6xl md:grid-cols-3">
+    <div class="fade-up border-white/[0.06] px-6 py-12 text-center md:border-r md:text-left">
+      <p class="font-mono text-5xl font-semibold tracking-tight text-white">87<span class="text-alarm">%</span></p>
+      <p class="mt-3 text-sm text-zinc-400">of freelancers suffer late payments</p>
+    </div>
+    <div class="fade-up border-t border-white/[0.06] px-6 py-12 text-center md:border-r md:border-t-0 md:text-left">
+      <p class="font-mono text-5xl font-semibold tracking-tight text-white"><span class="text-alarm">$</span>1.2B</p>
+      <p class="mt-3 text-sm text-zinc-400">unrecovered annual creator fees</p>
+    </div>
+    <div class="fade-up border-t border-white/[0.06] px-6 py-12 text-center md:border-t-0 md:text-left">
+      <p class="font-mono text-5xl font-semibold tracking-tight text-white">24<span class="ml-1 text-2xl text-alarm">days</span></p>
+      <p class="mt-3 text-sm text-zinc-400">average spent chasing ghosted invoices</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" class="relative scroll-mt-20 py-24 sm:py-32" aria-labelledby="features-title">
+  <div class="mx-auto max-w-6xl px-5">
+    <div class="fade-up max-w-2xl">
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-shield-light">Your bodyguard</p>
+      <h2 id="features-title" class="section-heading mt-3 text-balance text-3xl font-semibold tracking-tight text-white sm:text-5xl">Three layers of protection between you and unpaid work.</h2>
+    </div>
+
+    <div class="feature-grid mt-14 grid gap-4 md:grid-cols-3">
+      <!-- Feature 1 -->
+      <article class="feature-card fade-up card-spot group flex flex-col rounded-2xl border border-white/[0.07] bg-ink-900 p-6 transition-colors hover:border-shield/30">
+        <div class="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03]">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>
+        </div>
+        <h3 class="mt-5 text-lg font-medium text-white">Escalating Automation</h3>
+        <p class="mt-2 text-sm leading-relaxed text-zinc-400">Flows from gentle nudges to strict legal templates dynamically, adapting tone to every day of silence.</p>
+        <div class="mt-6 rounded-lg border border-white/[0.06] bg-ink p-3" role="group" aria-label="Escalation tone demo">
+          <div class="flex items-center justify-between text-[11px]">
+            <span class="text-zinc-500">Days overdue</span>
+            <span id="toneDays" class="font-mono text-white">3</span>
+          </div>
+          <label for="toneRange" class="sr-only">Days overdue</label>
+          <input id="toneRange" type="range" min="1" max="30" value="3" class="mt-2 w-full accent-[#3b82f6]" />
+          <p id="toneLabel" class="mt-2 text-[12px] font-medium text-shield-light">Gentle nudge</p>
+          <p id="toneText" class="mt-1 min-h-[54px] text-[12px] leading-relaxed text-zinc-400"></p>
+        </div>
+      </article>
+
+      <!-- Feature 2 -->
+      <article class="feature-card fade-up card-spot group flex flex-col rounded-2xl border border-white/[0.07] bg-ink-900 p-6 transition-colors hover:border-shield/30">
+        <div class="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03]">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+        </div>
+        <h3 class="mt-5 text-lg font-medium text-white">The Pay-to-Unlock System</h3>
+        <p class="mt-2 text-sm leading-relaxed text-zinc-400">Blocks final deliverables until client cards clear Stripe or Payoneer balances. No payment, no files.</p>
+        <div class="mt-6 rounded-lg border border-white/[0.06] bg-ink p-3">
+          <div class="flex items-center gap-3">
+            <div id="fileIcon" class="grid h-10 w-10 shrink-0 place-items-center rounded-md border border-alarm/30 bg-alarm/10 text-alarm-light transition-colors">
+              <svg id="fileLockSvg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            </div>
+            <div class="min-w-0 flex-1">
+              <p class="truncate text-[12px] font-medium text-white">brand-final-v3.zip</p>
+              <p id="fileStatus" class="text-[11px] text-alarm-light">Locked · awaiting $2,400</p>
+            </div>
+          </div>
+          <div class="mt-3 h-1 overflow-hidden rounded-full bg-white/[0.06]"><div id="fileBar" class="h-full w-0 rounded-full bg-shield transition-all duration-1000"></div></div>
+          <button id="unlockBtn" class="mt-3 w-full rounded-md border border-white/10 px-3 py-2 text-[12px] font-medium text-zinc-200 transition-colors hover:bg-white/5">Simulate Stripe charge</button>
+        </div>
+      </article>
+
+      <!-- Feature 3 -->
+      <article id="blacklist" class="fade-up card-spot group flex scroll-mt-24 flex-col rounded-2xl border border-white/[0.07] bg-ink-900 p-6 transition-colors hover:border-shield/30">
+        <div class="grid h-10 w-10 place-items-center rounded-lg border border-white/10 bg-white/[0.03]">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        </div>
+        <h3 class="mt-5 text-lg font-medium text-white">The Freelancer Client Blacklist</h3>
+        <p class="mt-2 text-sm leading-relaxed text-zinc-400">Crowdsourced database to search for bad business reputations before you sign a single contract.</p>
+        <div class="mt-6 rounded-lg border border-white/[0.06] bg-ink p-3">
+          <label for="blSearch" class="sr-only">Search a company</label>
+          <div class="flex items-center gap-2 rounded-md border border-white/10 bg-ink-800 px-2.5 py-1.5 focus-within:border-shield/50">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#71717a" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input id="blSearch" type="search" placeholder="Try “nimbus” or “apex”" autocomplete="off" class="w-full bg-transparent text-[12px] text-white placeholder:text-zinc-600 focus:outline-none" />
+          </div>
+          <ul id="blResults" class="mt-2 min-h-[84px] space-y-1" aria-live="polite"></ul>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" class="relative scroll-mt-20 overflow-hidden border-t border-white/[0.06] py-24 sm:py-32" aria-labelledby="pricing-title">
+  <div class="pointer-events-none absolute left-1/2 top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-50 blur-3xl" style="background:radial-gradient(closest-side, rgba(59,130,246,.3), transparent)" aria-hidden="true"></div>
+  <div class="relative mx-auto max-w-6xl px-5">
+    <div class="fade-up mx-auto max-w-xl text-center">
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-shield-light">Pricing</p>
+      <h2 id="pricing-title" class="section-heading mt-3 text-balance text-3xl font-semibold tracking-tight text-white sm:text-5xl">One plan. Every invoice protected.</h2>
+      <p class="mt-4 text-zinc-400">Recover a single late invoice and PayShield pays for itself for a year.</p>
+    </div>
+
+    <div class="pricing-card fade-up relative mx-auto mt-14 max-w-md">
+      <div class="absolute -inset-px rounded-3xl bg-gradient-to-b from-shield via-shield/20 to-white/5" aria-hidden="true"></div>
+      <div class="relative rounded-3xl bg-ink-900 p-8 sm:p-10">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-medium text-white">Pro Protector Tier</h3>
+          <span class="rounded-full border border-shield/30 bg-shield/10 px-2.5 py-1 text-[11px] font-medium text-shield-light">Most popular</span>
+        </div>
+        <p class="mt-6 flex items-baseline gap-1.5">
+          <span class="price font-mono text-6xl font-semibold tracking-tight text-white">$39</span>
+          <span class="text-zinc-500">/ month</span>
+        </p>
+        <p class="mt-2 text-sm text-zinc-500">Billed monthly. Cancel anytime.</p>
+        <ul class="mt-8 space-y-3.5 text-sm">
+          <li class="flex items-start gap-3"><span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-shield/15"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="3.2" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg></span><span class="text-zinc-200">Unlimited automatic escalations</span></li>
+          <li class="flex items-start gap-3"><span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-shield/15"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="3.2" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg></span><span class="text-zinc-200">Twilio SMS alerts</span></li>
+          <li class="flex items-start gap-3"><span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-shield/15"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="3.2" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg></span><span class="text-zinc-200">Custom legal warnings</span></li>
+          <li class="flex items-start gap-3"><span class="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-shield/15"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="3.2" aria-hidden="true"><path d="m5 12 5 5L20 7"/></svg></span><span class="text-zinc-200">Direct Payoneer settlement routing</span></li>
+        </ul>
+        <a href="#" class="glow-blue mt-10 flex w-full items-center justify-center gap-2 rounded-xl bg-shield px-6 py-3.5 text-sm font-medium text-white transition-all">
+          Start protecting my invoices
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <p class="mt-4 text-center text-xs text-zinc-500">14-day free trial · No card required</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- FOOTER -->
+<footer class="border-t border-white/[0.06] bg-black">
+  <div class="mx-auto flex max-w-6xl flex-col gap-8 px-5 py-12 md:flex-row md:items-center md:justify-between">
+    <div>
+      <a href="#" class="flex items-center gap-2 text-white">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>
+        <span class="text-sm font-semibold">PayShield</span>
+      </a>
+      <p class="mt-2 text-xs text-zinc-500">The bodyguard for your freelance revenue.</p>
+    </div>
+    <nav aria-label="Footer" class="footer-nav flex flex-wrap gap-x-7 gap-y-3 text-sm text-zinc-500">
+      <a href="#features" class="hover:text-white">Features</a>
+      <a href="#pricing" class="hover:text-white">Pricing</a>
+      <a href="#blacklist" class="hover:text-white">Blacklist</a>
+      <a href="#" class="hover:text-white">Privacy</a>
+      <a href="#" class="hover:text-white">Terms</a>
+      <a href="#" class="hover:text-white">Contact</a>
+    </nav>
+  </div>
+  <div class="border-t border-white/[0.04]">
+    <p class="mx-auto max-w-6xl px-5 py-5 text-xs text-zinc-600">© 2026 PayShield Inc. All rights reserved.</p>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => {
+    const open = mobileMenu.classList.toggle('hidden') === false;
+    menuBtn.setAttribute('aria-expanded', String(open));
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { mobileMenu.classList.add('hidden'); menuBtn.setAttribute('aria-expanded','false'); }));
+
+  // Reveal on scroll
+  const io = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.12 });
+  document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+
+  // Spotlight cards
+  document.querySelectorAll('.card-spot').forEach(card => card.addEventListener('pointermove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--x', (e.clientX - r.left) + 'px');
+    card.style.setProperty('--y', (e.clientY - r.top) + 'px');
+  }));
+
+  // Live community-reported client check (local demo data)
+  const BLACKLIST_STORAGE_KEY = 'payshield_blacklist';
+  const defaultBlacklist = [
+    { clientName: 'Acme Studio', disputedAmount: '$3,200', offenseStatus: 'Unpaid invoice · 47 days overdue' },
+    { clientName: 'Alpha Digital', disputedAmount: '$1,850', offenseStatus: 'Non-payment · Deliverables withheld' },
+  ];
+  function loadBlacklist() {
+    try {
+      const stored = localStorage.getItem(BLACKLIST_STORAGE_KEY);
+      if (!stored) {
+        localStorage.setItem(BLACKLIST_STORAGE_KEY, JSON.stringify(defaultBlacklist));
+        return defaultBlacklist;
+      }
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed)) return parsed;
+    } catch (error) {
+      // Storage may be unavailable in private or restricted browsing contexts.
+    }
+    return defaultBlacklist;
+  }
+  const backgroundCheckForm = document.getElementById('backgroundCheckForm');
+  const backgroundCheckInput = document.getElementById('backgroundCheckInput');
+  const backgroundCheckResult = document.getElementById('backgroundCheckResult');
+  function renderBackgroundCheck(query) {
+    const normalizedQuery = query.trim().toLocaleLowerCase();
+    if (!normalizedQuery) {
+      backgroundCheckResult.replaceChildren();
+      backgroundCheckInput.focus();
+      return;
+    }
+    const entries = loadBlacklist();
+    const match = entries.find(entry => {
+      const name = typeof entry === 'string' ? entry : entry?.clientName || entry?.name || entry?.client || '';
+      return String(name).trim().toLocaleLowerCase().includes(normalizedQuery);
+    });
+    if (match) {
+      const clientName = typeof match === 'string' ? match : match.clientName || match.name || match.client;
+      const amount = typeof match === 'object' ? match.disputedAmount ?? match.amount ?? 'Not disclosed' : 'Not disclosed';
+      const status = typeof match === 'object' ? match.offenseStatus ?? match.status ?? match.offense ?? 'Community report on file' : 'Community report on file';
+      backgroundCheckResult.innerHTML = `
+        <article class="rounded-xl border border-rose-500/50 bg-rose-950/30 p-4 sm:p-5" role="status">
+          <div class="flex items-start gap-3">
+            <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-rose-500/30 bg-rose-500/10 text-rose-300" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4m0 4h.01"/><path d="M10.3 3.9 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3l-7.6-13.1a2 2 0 0 0-3.4 0Z"/></svg>
+            </span>
+            <div class="min-w-0 flex-1">
+              <p class="text-xs font-semibold uppercase tracking-wider text-rose-300">Community report found</p>
+              <h3 class="mt-1 break-words text-lg font-semibold text-white"></h3>
+              <dl class="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+                <div><dt class="text-xs text-gray-400">Disputed amount</dt><dd class="mt-0.5 font-medium text-gray-100"></dd></div>
+                <div><dt class="text-xs text-gray-400">Offense status</dt><dd class="mt-0.5 font-medium text-rose-200"></dd></div>
+              </dl>
+              <a href="dashboard.html" class="mt-4 inline-flex min-h-10 items-center rounded-lg border border-rose-400/30 bg-rose-500/10 px-4 text-sm font-medium text-rose-100 transition hover:bg-rose-500/20">View Full Community Board</a>
+            </div>
+          </div>
+        </article>`;
+      const card = backgroundCheckResult.querySelector('article');
+      card.querySelector('h3').textContent = String(clientName);
+      const values = card.querySelectorAll('dd');
+      values[0].textContent = String(amount);
+      values[1].textContent = String(status);
+      return;
+    }
+    backgroundCheckResult.innerHTML = `
+      <article class="rounded-xl border border-emerald-500/40 bg-emerald-950/25 p-4 sm:p-5" role="status">
+        <div class="flex items-start gap-3">
+          <span class="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-emerald-500/30 bg-emerald-500/10 text-emerald-300" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>
+          </span>
+          <div class="flex-1">
+            <h3 class="text-sm font-semibold leading-relaxed text-emerald-100">Clear Record: No community reports found for this client yet</h3>
+            <a href="dashboard.html" class="mt-3 inline-flex min-h-10 items-center rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-4 text-sm font-medium text-emerald-100 transition hover:bg-emerald-500/20">Report a Bad Client</a>
+          </div>
+        </div>
+      </article>`;
+  }
+  backgroundCheckForm.addEventListener('submit', event => {
+    event.preventDefault();
+    renderBackgroundCheck(backgroundCheckInput.value);
+  });
+  backgroundCheckInput.addEventListener('input', () => {
+    if (backgroundCheckInput.value.trim()) renderBackgroundCheck(backgroundCheckInput.value);
+    else backgroundCheckResult.replaceChildren();
+  });
+
+  // Dashboard demo
+  const STAGES = [
+    { name: 'Gentle nudge', day: 'Day 1', msg: n => `Hi ${n}, just a friendly reminder that your invoice is now due. Here's the payment link whenever you're ready.` },
+    { name: 'Firm reminder', day: 'Day 7', msg: n => `${n}, your invoice is now 7 days overdue. Please settle it within 48 hours to keep the project on schedule.` },
+    { name: 'Final notice', day: 'Day 14', msg: n => `Final notice: ${n}, deliverables remain locked and a late fee of 5% has been applied per our agreement.` },
+    { name: 'Legal warning', day: 'Day 21', msg: n => `Formal notice to ${n}: failure to pay within 7 days will result in referral to collections and small claims proceedings.` },
+  ];
+  const invoices = [
+    { id: 'INV-2041', client: 'Nimbus Studio', amount: 4200, days: 23, stage: 3 },
+    { id: 'INV-2038', client: 'Apex Growth Co.', amount: 2400, days: 15, stage: 2 },
+    { id: 'INV-2044', client: 'Lumen Labs', amount: 6800, days: 8, stage: 1 },
+    { id: 'INV-2047', client: 'Orbit Media', amount: 1420, days: 2, stage: 0 },
+  ];
+  let recovered = 9340;
+  let selected = 0;
+  const fmt = n => '$' + n.toLocaleString('en-US');
+  const stageColor = s => s >= 3 ? 'border-alarm/40 bg-alarm/15 text-alarm-light' : s === 2 ? 'border-orange-400/30 bg-orange-400/10 text-orange-300' : s === 1 ? 'border-amber-300/25 bg-amber-300/10 text-amber-200' : 'border-shield/30 bg-shield/10 text-shield-light';
+
+  const listEl = document.getElementById('invoiceList');
+  const stageEl = document.getElementById('stageList');
+  const escBtn = document.getElementById('escalateBtn');
+  const paidBtn = document.getElementById('paidBtn');
+
+  function renderList() {
+    listEl.innerHTML = '';
+    invoices.forEach((inv, i) => {
+      const li = document.createElement('li');
+      const paid = inv.paid;
+      li.innerHTML = `
+        <button role="option" aria-selected="${i === selected}" class="invoice-row flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors ${i === selected ? 'bg-white/[0.05]' : 'hover:bg-white/[0.03]'}">
+          <span class="relative grid h-2 w-2 shrink-0 place-items-center">
+            <span class="relative h-2 w-2 rounded-full ${paid ? 'bg-emerald-400' : inv.stage >= 3 ? 'pulse-ring bg-alarm text-alarm' : 'bg-zinc-600'}"></span>
+          </span>
+          <span class="min-w-0 flex-1">
+            <span class="block truncate text-[13px] ${paid ? 'text-zinc-500 line-through' : 'text-white'}">${inv.client}</span>
+            <span class="block font-mono text-[10px] text-zinc-500">${inv.id} · ${paid ? 'paid' : inv.days + 'd late'}</span>
+          </span>
+          <span class="hidden rounded border px-1.5 py-0.5 text-[10px] font-medium sm:inline ${paid ? 'border-emerald-400/30 bg-emerald-400/10 text-emerald-300' : stageColor(inv.stage)}">${paid ? 'Recovered' : STAGES[inv.stage].name}</span>
+          <span class="invoice-amount font-mono text-[12px] ${paid ? 'text-zinc-500' : 'text-zinc-200'}">${fmt(inv.amount)}</span>
+        </button>`;
+      li.querySelector('button').addEventListener('click', () => { selected = i; render(); });
+      listEl.appendChild(li);
+    });
+  }
+
+  function renderPanel() {
+    const inv = invoices[selected];
+    document.getElementById('panelClient').textContent = `${inv.client} · ${fmt(inv.amount)}`;
+    const lock = document.getElementById('panelLock');
+    if (inv.paid) {
+      lock.className = 'inline-flex shrink-0 items-center gap-1 rounded-md border border-emerald-400/30 bg-emerald-400/10 px-2 py-1 text-[10px] font-medium text-emerald-300';
+      lock.lastChild.textContent = ' Files released';
+    } else {
+      lock.className = 'inline-flex shrink-0 items-center gap-1 rounded-md border border-alarm/30 bg-alarm/10 px-2 py-1 text-[10px] font-medium text-alarm-light';
+      lock.lastChild.textContent = ' Files locked';
+    }
+    stageEl.innerHTML = STAGES.map((s, i) => {
+      const done = !inv.paid && i < inv.stage;
+      const active = !inv.paid && i === inv.stage;
+      const danger = i >= 3;
+      const dot = active ? (danger ? 'bg-alarm ring-4 ring-alarm/20' : 'bg-shield ring-4 ring-shield/20') : done ? 'bg-zinc-400' : 'bg-zinc-700';
+      return `<li class="flex items-center gap-3">
+        <span class="h-2.5 w-2.5 shrink-0 rounded-full ${dot}"></span>
+        <span class="flex-1 text-[12px] ${active ? (danger ? 'font-medium text-alarm-light' : 'font-medium text-white') : done ? 'text-zinc-400' : 'text-zinc-600'}">${s.name}</span>
+        <span class="font-mono text-[10px] text-zinc-600">${s.day}</span>
+      </li>`;
+    }).join('');
+    document.getElementById('msgPreview').textContent = inv.paid
+      ? `Payment of ${fmt(inv.amount)} cleared via Stripe. Deliverables have been released to ${inv.client} automatically.`
+      : STAGES[Math.min(inv.stage + 1, 3)].msg(inv.client);
+    escBtn.disabled = inv.paid || inv.stage >= 3;
+    escBtn.textContent = inv.stage >= 3 && !inv.paid ? 'Max escalation' : 'Escalate now';
+    paidBtn.disabled = inv.paid;
+    paidBtn.classList.toggle('opacity-40', !!inv.paid);
+  }
+
+  function renderKpis() {
+    const open = invoices.filter(i => !i.paid);
+    document.getElementById('kpiOut').textContent = fmt(open.reduce((a, b) => a + b.amount, 0));
+    document.getElementById('kpiRec').textContent = fmt(recovered);
+    document.getElementById('kpiCrit').textContent = open.filter(i => i.stage >= 3).length;
+  }
+
+  function render() { renderList(); renderPanel(); renderKpis(); }
+
+  escBtn.addEventListener('click', () => { const inv = invoices[selected]; if (inv.stage < 3) { inv.stage++; inv.days = Math.max(inv.days, [1,7,14,21][inv.stage]); render(); } });
+  paidBtn.addEventListener('click', () => { const inv = invoices[selected]; if (!inv.paid) { inv.paid = true; recovered += inv.amount; render(); } });
+  render();
+
+  // Tone slider
+  const toneRange = document.getElementById('toneRange');
+  function renderTone() {
+    const d = +toneRange.value;
+    const idx = d >= 21 ? 3 : d >= 14 ? 2 : d >= 7 ? 1 : 0;
+    document.getElementById('toneDays').textContent = d;
+    const label = document.getElementById('toneLabel');
+    label.textContent = STAGES[idx].name;
+    label.className = 'mt-2 text-[12px] font-medium ' + (idx === 3 ? 'text-alarm-light' : idx === 2 ? 'text-orange-300' : idx === 1 ? 'text-amber-200' : 'text-shield-light');
+    document.getElementById('toneText').textContent = STAGES[idx].msg('Alex');
+  }
+  toneRange.addEventListener('input', renderTone);
+  renderTone();
+
+  // Pay-to-unlock
+  const unlockBtn = document.getElementById('unlockBtn');
+  let unlocked = false;
+  unlockBtn.addEventListener('click', () => {
+    const icon = document.getElementById('fileIcon'), status = document.getElementById('fileStatus'), bar = document.getElementById('fileBar');
+    if (!unlocked) {
+      unlockBtn.disabled = true;
+      status.textContent = 'Processing charge…';
+      status.className = 'text-[11px] text-zinc-400';
+      bar.style.width = '100%';
+      setTimeout(() => {
+        unlocked = true;
+        icon.className = 'grid h-10 w-10 shrink-0 place-items-center rounded-md border border-shield/40 bg-shield/10 text-shield-light transition-colors';
+        icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.6-1.8"/></svg>';
+        status.textContent = 'Unlocked · $2,400 cleared';
+        status.className = 'text-[11px] text-shield-light';
+        unlockBtn.textContent = 'Reset demo';
+        unlockBtn.disabled = false;
+      }, 1000);
+    } else {
+      unlocked = false;
+      bar.style.transition = 'none'; bar.style.width = '0'; requestAnimationFrame(() => bar.style.transition = '');
+      icon.className = 'grid h-10 w-10 shrink-0 place-items-center rounded-md border border-alarm/30 bg-alarm/10 text-alarm-light transition-colors';
+      icon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+      status.textContent = 'Locked · awaiting $2,400';
+      status.className = 'text-[11px] text-alarm-light';
+      unlockBtn.textContent = 'Simulate Stripe charge';
+    }
+  });
+
+  // Blacklist search
+  const BL = [
+    { name: 'Nimbus Studio', reports: 14, risk: 'High', note: 'Avg. 62 days late' },
+    { name: 'Apex Growth Co.', reports: 9, risk: 'High', note: 'Ghosts after delivery' },
+    { name: 'Apex Digital', reports: 1, risk: 'Low', note: 'Resolved dispute' },
+    { name: 'Lumen Labs', reports: 3, risk: 'Medium', note: 'Slow on final milestone' },
+    { name: 'Northwind Agency', reports: 0, risk: 'Clean', note: 'No reports filed' },
+    { name: 'Orbit Media', reports: 5, risk: 'Medium', note: 'Disputes scope late' },
+  ];
+  const riskCls = r => r === 'High' ? 'text-alarm-light bg-alarm/10 border-alarm/30' : r === 'Medium' ? 'text-amber-200 bg-amber-300/10 border-amber-300/25' : r === 'Low' ? 'text-zinc-300 bg-white/5 border-white/10' : 'text-emerald-300 bg-emerald-400/10 border-emerald-400/25';
+  const blSearch = document.getElementById('blSearch'), blResults = document.getElementById('blResults');
+  function renderBL() {
+    const q = blSearch.value.trim().toLowerCase();
+    const rows = (q ? BL.filter(b => b.name.toLowerCase().includes(q)) : BL.slice(0, 2)).slice(0, 3);
+    blResults.innerHTML = rows.length ? rows.map(b => `
+      <li class="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 hover:bg-white/[0.03]">
+        <span class="min-w-0">
+          <span class="block truncate text-[12px] text-white">${b.name}</span>
+          <span class="block text-[10px] text-zinc-500">${b.reports} reports · ${b.note}</span>
+        </span>
+        <span class="shrink-0 rounded border px-1.5 py-0.5 text-[10px] font-medium ${riskCls(b.risk)}">${b.risk}</span>
+      </li>`).join('') : `<li class="px-2 py-3 text-[12px] text-zinc-500">No reports found. Looks clean.</li>`;
+  }
+  blSearch.addEventListener('input', renderBL);
+  renderBL();
+</script>
+</body>
+</html>
